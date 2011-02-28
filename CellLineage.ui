@@ -484,12 +484,12 @@
   <customwidget>
    <class>QSliderLineEdit</class>
    <extends>QWidget</extends>
-   <header>QSliderLineEdit</header>
+   <header>QSliderLineEdit.h</header>
   </customwidget>
   <customwidget>
    <class>QVCRWidget</class>
    <extends>QWidget</extends>
-   <header>QVCRWidget</header>
+   <header>QVCRWidget.h</header>
   </customwidget>
   <customwidget>
    <class>QVTKWidget</class>

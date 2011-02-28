@@ -1,7 +1,7 @@
 // Copyright 2009 Sandia Corporation, Kitware Inc.
 // See LICENSE.txt for details.
 
-#include "QSliderLineEdit"
+#include "QSliderLineEdit.h"
 
 #include "QLayout"
 #include "QLineEdit"

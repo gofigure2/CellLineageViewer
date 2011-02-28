@@ -38,7 +38,7 @@ set(Srcs
   vtkVolumeViewer.cxx
   )
 set(UIs CellLineage.ui QVCRWidget.ui)
-set(Headers CellLineage.h QSliderLineEdit QtSNLCommon.h QVCRWidget)
+set(Headers CellLineage.h QSliderLineEdit.h QtSNLCommon.h QVCRWidget.h)
 set(Resources Icons/FamFamFamIcons.qrc)
 
 # The rest should just work (sure...)
