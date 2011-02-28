@@ -55,9 +55,6 @@ public:
 
   virtual void Execute(vtkObject* , unsigned long , void*)
   {
-    (void) caller;
-    (void) e;
-
     std::vector<vtkView*>::iterator it = this->Views.begin();
     std::vector<vtkView*>::iterator end = this->Views.end();
 

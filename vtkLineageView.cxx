@@ -174,13 +174,13 @@ int vtkLineageView::GetFontSize()
   return this->LabeledDataMapper->GetLabelTextProperty()->GetFontSize();
 }
 
-void vtkLineageView::SetLabelFieldName(const char *field)
+void vtkLineageView::SetLabelFieldName(const std::string& field)
 {
   // Set the field name
-  this->LabeledDataMapper->SetFieldDataName(field);
+  this->LabeledDataMapper->SetFieldDataName( field.c_str() );
 }
 
-char* vtkLineageView::GetLabelFieldName()
+std::string vtkLineageView::GetLabelFieldName()
 {
   return this->LabeledDataMapper->GetFieldDataName();
 }
@@ -367,20 +367,26 @@ void vtkLineageView::SetupPipeline()
   this->Renderer->SetBackground(1.0, 1.0, 1.0);
 }
 
-void vtkLineageView::SetVertexColorFieldName(const char *field)
+void vtkLineageView::SetVertexColorFieldName(const std::string& field)
 {
   // Sanity Check
-  if (!strcmp(field,"")) return;
-  if (!strcmp(field,"No Filter")) return;
+  if ( field.compare("") == 0 )
+    {
+    return;
+    }
+  if ( field.compare("No Filter") == 0 )
+    {
+    return;
+    }
 
   this->GlyphMapper->SetScalarModeToUsePointFieldData();
-  this->GlyphMapper->SelectColorArray(field);
+  this->GlyphMapper->SelectColorArray(field.c_str());
 
   // Okay now get the range of the data field
   double range[2];
   this->CollapseToPolyData->Update();
   vtkDataArray *array =
-    this->CollapseToPolyData->GetOutput()->GetPointData()->GetArray(field);
+    this->CollapseToPolyData->GetOutput()->GetPointData()->GetArray(field.c_str());
   if (array)
     {
     array->GetRange(range);
@@ -388,20 +394,26 @@ void vtkLineageView::SetVertexColorFieldName(const char *field)
     }
 }
 
-void vtkLineageView::SetEdgeColorFieldName(const char *field)
+void vtkLineageView::SetEdgeColorFieldName(const std::string& field)
 {
   // Sanity Check
-  if (!strcmp(field,"")) return;
-  if (!strcmp(field,"No Filter")) return;
+  if ( field.compare("") == 0 )
+    {
+    return;
+    }
+  if ( field.compare("No Filter") == 0 )
+    {
+    return;
+    }
 
   this->CollapseMapper->SetScalarModeToUseCellFieldData();
-  this->CollapseMapper->SelectColorArray(field);
+  this->CollapseMapper->SelectColorArray(field.c_str());
 
   // Okay now get the range of the data field
   double range[2];
   this->CollapseToPolyData->Update();
   vtkDataArray *array =
-    this->CollapseToPolyData->GetOutput()->GetCellData()->GetArray(field);
+    this->CollapseToPolyData->GetOutput()->GetCellData()->GetArray(field.c_str());
   if (array)
     {
     array->GetRange(range);
@@ -414,12 +426,12 @@ void vtkLineageView::SetEdgeScalarVisibility(bool value)
   this->CollapseMapper->SetScalarVisibility(value);
 }
 
-char* vtkLineageView::GetVertexColorFieldName()
+std::string vtkLineageView::GetVertexColorFieldName()
 {
   return this->GlyphMapper->GetArrayName();
 }
 
-char* vtkLineageView::GetEdgeColorFieldName()
+std::string vtkLineageView::GetEdgeColorFieldName()
 {
   return this->CollapseMapper->GetArrayName();
 }
