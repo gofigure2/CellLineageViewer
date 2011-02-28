@@ -43,7 +43,7 @@ class CellLineage : public QMainWindow
 public:
 
   // Constructor/Destructor
-  CellLineage(); 
+  CellLineage( QWidget * iParent = 0, Qt::WindowFlags iFlags = 0 );
   ~CellLineage();
 
 public slots:
@@ -53,31 +53,31 @@ public slots:
   virtual void slotOpenGeneData();
   virtual void slotOpenVolumeData();
   virtual void slotExit();
-  
+
   // Description:
   // Toggle the mouse mode between selection and collapsing/expanding
   void slotSetCollapseMode(int on);
-  
+
   // Description:
   // Set the labels on/off
   void slotSetLabels(int on);
-  
+
   // Description:
   // Set whether to use radial layout.
   void slotSetRadialLayout(int radial);
-  
+
   // Description:
   // Set the radial layout angle.
   void slotSetRadialAngle(int angle);
-    
+
   // Description:
   // Set the log spacing for the layout.
   void slotSetLogSpacingFactor(double spacing);
-  
+
   // Description:
   // Set whether to see the back plane
   void slotSetBackPlane(int state);
-    
+
   // Description:
   // Set whether to see the iso contour
   void slotSetIsoContour(int state);
@@ -99,7 +99,7 @@ public slots:
   void slotSetDistanceByTime(int state);
 
 protected:
-   
+
 protected slots:
 
   // Description:
@@ -117,11 +117,11 @@ protected slots:
   // Description:
   // The gene selection changed
   void slotGeneSelectionChanged();
-  
+
   // Description:
   // Select genes expressed in cells
   void slotSelectGenesFromCells(vtkObject*, unsigned long, void*, void*);
-  
+
   // Description:
   // VCR slots
   void slotVCRPlay();
@@ -129,7 +129,7 @@ protected slots:
   void slotVCRBack();
   void slotVCRForward();
   void slotVCRFirst();
-  void slotVCRLast();         
+  void slotVCRLast();
 
 private:
 
@@ -137,16 +137,16 @@ private:
 
   // Description: Browse for and read the Lineage data
   int readLineageData();
-  
+
   // Description: Browse for and read the volume data
   int readVolumeData();
-  
+
   // Description: Open a specific timestep (do not browse)
   int readVolumeDataTimeStep(int timeStep);
-  
+
   // Description: Set up the Lineage list view of the data
   void setUpLineageListView();
-  
+
   // Members
   vtkTreeReader*           LineageReader;
   vtkLineageView*          LineageView;
@@ -168,10 +168,10 @@ private:
   map<vtkStdString, vtkIdType> GeneToVertex;
   map<vtkStdString, vtkIdType> CellToTreePedigree;
   map<vtkStdString, vtkIdType> GeneToTableRow;
-    
+
   // Designer form
   Ui_CellLineage *ui;
-  
+
   // Global time ivar
   int globalTime;
 
