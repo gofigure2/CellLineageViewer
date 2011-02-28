@@ -12,12 +12,12 @@
 #include "vtkSmartPointer.h"
 #include "vtkTree.h"
 
-#include <vtksys/stl/map>
+#include <map>
 
 class vtkTreeVertexToEdgeSelectionInternals
 {
 public:
-  vtksys_stl::map<vtkIdType, vtkIdType> PedigreeToId;
+  std::map<vtkIdType, vtkIdType> PedigreeToId;
 };
 
 vtkCxxRevisionMacro(vtkTreeVertexToEdgeSelection, "$Revision$");
@@ -42,8 +42,8 @@ void vtkTreeVertexToEdgeSelection::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 int vtkTreeVertexToEdgeSelection::RequestData(
-  vtkInformation* vtkNotUsed(request), 
-  vtkInformationVector** inputVector, 
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
   vtkInformationVector* outputVector)
 {
   vtkSelection* input = vtkSelection::GetData(inputVector[0]);

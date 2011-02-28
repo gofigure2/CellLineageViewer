@@ -53,7 +53,7 @@ public:
     view->AddObserver(vtkCommand::SelectionChangedEvent, this);
   }
 
-  virtual void Execute(vtkObject* caller, unsigned long e, void*)
+  virtual void Execute(vtkObject* , unsigned long , void*)
   {
     (void) caller;
     (void) e;

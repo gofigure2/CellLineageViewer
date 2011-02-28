@@ -23,7 +23,7 @@
 #include "vtkVariant.h"
 
 #include <assert.h>
-#include <vtksys/stl/set>
+#include <set>
 
 vtkCxxRevisionMacro(vtkTreeCollapseFilter, "$Revision$");
 vtkStandardNewMacro(vtkTreeCollapseFilter);
@@ -40,8 +40,8 @@ vtkTreeCollapseFilter::~vtkTreeCollapseFilter()
 }
 
 void vtkTreeCollapseFilterCollapsedDFS(vtkTree* input,
-  vtkIdType idx, vtkIdType parent, vtkMutableDirectedGraph* output, 
-  const vtksys_stl::set<vtkIdType>& collapsedNodes, vtkPoints* pts,
+  vtkIdType idx, vtkIdType parent, vtkMutableDirectedGraph* output,
+  const std::set<vtkIdType>& collapsedNodes, vtkPoints* pts,
   vtkIdTypeArray* ped, vtkCharArray* collapsedArray)
 {
   vtkIdType newChild = -1;
@@ -89,7 +89,7 @@ int vtkTreeCollapseFilter::RequestData(
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  
+
   // Storing the inputTree and outputTree handles
   vtkTree* inputTree = vtkTree::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -105,7 +105,7 @@ int vtkTreeCollapseFilter::RequestData(
     vtkSmartPointer<vtkMutableDirectedGraph>::New();
 
   // Copy collapsed nodes to the set
-  vtksys_stl::set<vtkIdType> collapsedNodes;
+  std::set<vtkIdType> collapsedNodes;
   vtkIdType cc;
   for ( cc = 0; cc < this->CollapsedNodes->GetNumberOfTuples(); ++ cc )
     {

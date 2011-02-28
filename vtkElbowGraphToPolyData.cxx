@@ -14,7 +14,7 @@
 #include "vtkPointData.h"
 #include "vtkStringArray.h"
 
-#include <vtksys/stl/map>
+#include <map>
 
 vtkCxxRevisionMacro(vtkElbowGraphToPolyData, "$Revision$");
 vtkStandardNewMacro(vtkElbowGraphToPolyData);
@@ -22,7 +22,7 @@ vtkStandardNewMacro(vtkElbowGraphToPolyData);
 class vtkElbowGraphToPolyDataInternal
 {
 public:
-  typedef vtksys_stl::map<vtkIdType, vtkIdType> MapIdTypeToIdType;
+  typedef std::map<vtkIdType, vtkIdType> MapIdTypeToIdType;
   MapIdTypeToIdType PointMapping;
   vtkIdType AddEdge(vtkGraph* input, vtkPolyData* output, vtkIdType edgeId,
     double factor);
@@ -42,10 +42,10 @@ vtkIdType vtkElbowGraphToPolyDataInternal::AddEdge(vtkGraph*
   vtkPoints* outputPts = output->GetPoints();
   vtkCellArray* lines = output->GetLines();
 
-  // For the elbow 
+  // For the elbow
   vtkIdType points[2];
-  points[0] = input->GetSourceVertex(edgeId); 
-  points[1] = input->GetTargetVertex(edgeId); 
+  points[0] = input->GetSourceVertex(edgeId);
+  points[1] = input->GetTargetVertex(edgeId);
 
   // Calculate middle points
   double pointSource[3];
@@ -58,7 +58,7 @@ vtkIdType vtkElbowGraphToPolyDataInternal::AddEdge(vtkGraph*
   inputPts->GetPoint(points[1], pointTarget);
 
   //double invFactor = 1 - factor;
-  
+
   double xFactor = 0;
   double yFactor = 0;
 #define myABS(x) (((x) < 0)?(-(x)):(x))
@@ -73,7 +73,7 @@ vtkIdType vtkElbowGraphToPolyDataInternal::AddEdge(vtkGraph*
     yFactor = myABS(factor);
     }
 
-  
+
   midPoint[0] = (pointSource[0]*xFactor + pointTarget[0]*(1-xFactor));
   midPoint[1] = (pointSource[1]*yFactor + pointTarget[1]*(1-yFactor));
   midPoint[2] = (pointSource[2] + pointTarget[2])/2;
@@ -210,12 +210,12 @@ int vtkElbowGraphToPolyData::RequestData(
     // Only create lines for non-ghost edges
     for (vtkIdType i = 0; i < numEdges; i++)
       {
-      if (edgeGhostLevels->GetComponent(i, 0) == 0) 
+      if (edgeGhostLevels->GetComponent(i, 0) == 0)
         {
         vtkIdType ind = this->Internals->AddEdge(input, output, i, this->Factor);
         outputCellData->CopyData(inputEdgeData, i, ind);
         }
-      } 
+      }
     }
   output->Squeeze();
 

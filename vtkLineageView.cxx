@@ -58,7 +58,7 @@
 #include "vtkThresholdPoints.h"
 #include "vtkVertexGlyphFilter.h"
 
-#include <vtksys/stl/set>
+#include <set>
 
 class vtkCoordinate;
 
@@ -81,7 +81,7 @@ vtkLineageView::vtkLineageView()
   this->GlyphMapper           = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->CollapseMapper        = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->IsoActor              = vtkSmartPointer<vtkActor>::New();
-  this->PlaneActor            = vtkSmartPointer<vtkActor>::New();  
+  this->PlaneActor            = vtkSmartPointer<vtkActor>::New();
   this->GlyphActor            = vtkSmartPointer<vtkActor>::New();
   this->CollapseActor         = vtkSmartPointer<vtkActor>::New();
   this->LabelActor            = vtkSmartPointer<vtkActor2D>::New();
@@ -110,14 +110,14 @@ vtkLineageView::vtkLineageView()
 
   this->BlockUpdate = 0;
   this->SelectMode       = vtkLineageView::SELECT_MODE;
-  
+
   // Set up eventforwarder
   this->EventForwarder = vtkEventForwarderCommand::New();
   this->EventForwarder->SetTarget(this);
-  
+
   // Replace the interactor style
   this->SetInteractionModeTo2D();
-  
+
   // Set up some the default parameters
   this->LabeledDataMapper->SetFieldDataName("name");
   this->LabeledDataMapper->SetLabelModeToLabelFieldData();
@@ -151,9 +151,9 @@ vtkLineageView::vtkLineageView()
 vtkLineageView::~vtkLineageView()
 {
   this->SetEdgeWeightField(0);
-  
+
   this->EventForwarder->Delete();
-  
+
   // Smart pointers will handle the rest of
   // vtk pipeline objects :)
 }
@@ -228,7 +228,7 @@ void vtkLineageView::SetIsoContour(bool state)
 
 //----------------------------------------------------------------------------
 void vtkLineageView::SetRadialAngle(int angle)
-{  
+{
   this->Angle = angle;
   this->TreeLayoutStrategy->SetAngle(this->Angle);
   this->Renderer->ResetCamera();
@@ -239,7 +239,7 @@ int vtkLineageView::GetRadialAngle()
 {
   return this->Angle;
 }
-  
+
 //----------------------------------------------------------------------------
 void vtkLineageView::SetLogSpacingFactor(float spacing)
 {
@@ -255,10 +255,10 @@ void vtkLineageView::SetupPipeline()
   this->Renderer->SetBackground(0.3, 0.3, 0.3);
   this->ColorLUT->SetHueRange(0.667, 0.0);
   this->ColorLUT->Build();
- 
+
   // Wire up the pipeline
- 
-  // Set the input to NULL and turn the 
+
+  // Set the input to NULL and turn the
   // visibility of the actors off for now.
   // When SetInput() is called by the application
   // the input is set and the actors are turned on
@@ -271,7 +271,7 @@ void vtkLineageView::SetupPipeline()
   this->SelectionActor->PickableOff();
   this->CollapseActor->PickableOn();
   this->PlaneActor->VisibilityOff();
-  
+
   // Collapse certain vertices in the tree
   vtkIdTypeArray* ids = vtkIdTypeArray::New();
   this->TreeCollapse->SetCollapsedNodes(ids);
@@ -293,14 +293,14 @@ void vtkLineageView::SetupPipeline()
     vtkDataObject::FIELD_ASSOCIATION_POINTS_THEN_CELLS,
     "Collapsed");
   this->CollapsedThreshold->ThresholdByUpper(0.5);
-                                           
+
   this->CollapsedNodes->SetInputConnection(0,
     this->CollapsedThreshold->GetOutputPort(0));
   this->CollapsedNodes->SetInputConnection(1, this->ConeSource->GetOutputPort(0));
 
   // Set up the back plane
   this->MakePlane->SetInputConnection(0, this->CollapseToPolyData->GetOutputPort(0));
-  
+
   // Set up the iso contour (of the back plane)
   this->IsoContour->SetInputConnection(0, this->MakePlane->GetOutputPort(0));
   this->SmoothContour->SetInputConnection(0, this->IsoContour->GetOutputPort(0));
@@ -318,7 +318,7 @@ void vtkLineageView::SetupPipeline()
   node->SetFieldType(vtkSelectionNode::POINT);
   selection->AddNode(node);
   this->TreeVertexToEdge->SetInput(0, selection);
-  
+
   // Set up selection
   //this->TreeVertexToEdge->SetInputConnection(1, this->TreeCollapse->GetOutputPort(0));
   this->TreeVertexToEdge->SetInputConnection(1, this->TreeLayout->GetOutputPort(0));
@@ -334,7 +334,7 @@ void vtkLineageView::SetupPipeline()
   this->SelectionMapper->SetInputConnection(this->SelectionGeometry->GetOutputPort());
   this->CollapseMapper->SetInputConnection(this->CollapseToPolyData->GetOutputPort());
   this->CollapsedGlyphMapper->SetInputConnection(this->CollapsedNodes->GetOutputPort());
-  
+
   // Set up mapper parameters
   this->PlaneMapper->ColorByArrayComponent("StartTime", 0);
   this->PlaneMapper->SetScalarRange( this->MinTime, this->MaxTime);
@@ -346,7 +346,7 @@ void vtkLineageView::SetupPipeline()
   this->CollapseMapper->SetLookupTable(ColorLUT);
   this->CollapseMapper->SetScalarRange( this->MinTime, this->MaxTime);
   this->CollapsedGlyphMapper->SetScalarVisibility(false);
-  
+
   // Set mappers to actors
   this->IsoActor->SetMapper(this->IsoLineMapper);
   this->PlaneActor->SetMapper(this->PlaneMapper);
@@ -372,12 +372,12 @@ void vtkLineageView::SetVertexColorFieldName(const char *field)
   // Sanity Check
   if (!strcmp(field,"")) return;
   if (!strcmp(field,"No Filter")) return;
-  
+
   this->GlyphMapper->SetScalarModeToUsePointFieldData();
   this->GlyphMapper->SelectColorArray(field);
-  
+
   // Okay now get the range of the data field
-  double range[2]; 
+  double range[2];
   this->CollapseToPolyData->Update();
   vtkDataArray *array =
     this->CollapseToPolyData->GetOutput()->GetPointData()->GetArray(field);
@@ -385,7 +385,7 @@ void vtkLineageView::SetVertexColorFieldName(const char *field)
     {
     array->GetRange(range);
     this->GlyphMapper->SetScalarRange( range[0], range[1] );
-    } 
+    }
 }
 
 void vtkLineageView::SetEdgeColorFieldName(const char *field)
@@ -393,12 +393,12 @@ void vtkLineageView::SetEdgeColorFieldName(const char *field)
   // Sanity Check
   if (!strcmp(field,"")) return;
   if (!strcmp(field,"No Filter")) return;
-  
+
   this->CollapseMapper->SetScalarModeToUseCellFieldData();
   this->CollapseMapper->SelectColorArray(field);
-  
+
   // Okay now get the range of the data field
-  double range[2]; 
+  double range[2];
   this->CollapseToPolyData->Update();
   vtkDataArray *array =
     this->CollapseToPolyData->GetOutput()->GetCellData()->GetArray(field);
@@ -406,7 +406,7 @@ void vtkLineageView::SetEdgeColorFieldName(const char *field)
     {
     array->GetRange(range);
     this->CollapseMapper->SetScalarRange( range[0], range[1] );
-    } 
+    }
 }
 
 void vtkLineageView::SetEdgeScalarVisibility(bool value)
@@ -457,7 +457,7 @@ void vtkLineageView::AddRepresentationInternal(vtkDataRepresentation* rep)
     {
     //this->TreeCollapse->SetInputConnection(rep->GetInputConnection());
     this->TreeLayout->SetInputConnection(rep->GetInputConnection());
-    
+
     this->Renderer->AddActor(this->IsoActor);
     this->Renderer->AddActor(this->GlyphActor);
     this->Renderer->AddActor(this->LabelActor);
@@ -483,7 +483,7 @@ void vtkLineageView::RemoveRepresentationInternal(vtkDataRepresentation* rep)
       this->TreeCollapse->GetInputConnection(0, 0) == conn)
     {
     this->TreeCollapse->RemoveInputConnection(0, conn);
-  
+
     this->Renderer->RemoveActor(this->IsoActor);
     this->Renderer->RemoveActor(this->GlyphActor);
     this->Renderer->RemoveActor(this->LabelActor);
@@ -503,7 +503,7 @@ void vtkLineageView::SetAnnotationLink(vtkAnnotationLink* link)
 //----------------------------------------------------------------------------
 // Description:
 // Called to process the user event from the interactor style.
-void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId, 
+void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
   void* callData)
 {
   if (caller == this->GetInteractorStyle() && eventId == vtkCommand::SelectionChangedEvent
@@ -530,7 +530,7 @@ void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
     this->VisibleCellSelector->SetRenderPasses(0, 0, 0, 0, 1);
     this->VisibleCellSelector->Select();
 
-    vtksys_stl::set<vtkIdType> collapsedSet;
+    std::set<vtkIdType> collapsedSet;
     vtkIdTypeArray* collapsedOld = this->TreeCollapse->GetCollapsedNodes();
     for (vtkIdType n = 0; n < collapsedOld->GetNumberOfTuples(); n++)
       {
@@ -563,7 +563,7 @@ void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
     if (this->SelectMode == vtkLineageView::COLLAPSE_MODE)
       {
       vtkIdTypeArray* collapsedNew = vtkIdTypeArray::New();
-      vtksys_stl::set<vtkIdType>::iterator it, itEnd;
+      std::set<vtkIdType>::iterator it, itEnd;
       for (it = collapsedSet.begin(), itEnd = collapsedSet.end();
            it != itEnd; ++it)
         {
@@ -580,14 +580,14 @@ void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
       node->SetFieldType(vtkSelectionNode::VERTEX);
       node->SetSelectionList(selectedIds);
       selection->AddNode(node);
-      
+
       // If this is a union selection, append the selection
       if (rect[4] == vtkInteractorStyleRubberBand2D::SELECT_UNION)
         {
         vtkSelection* oldSelection = this->GetRepresentation()->GetAnnotationLink()->GetCurrentSelection();
         selection->Union(oldSelection);
         }
-      
+
       // Call select on the representation(s)
       this->GetRepresentation()->Select(this, selection);
       }
@@ -612,19 +612,19 @@ void vtkLineageView::PrepareForRendering()
     {
     return;
     }
-  
+
   // Make sure the input connection is up to date.
   vtkAlgorithmOutput* conn = rep->GetInputConnection();
   //this->TreeCollapse->SetInputConnection(conn);
   this->TreeLayout->SetInputConnection(conn);
-  
+
   // Make sure the selection link is up to date.
   vtkAnnotationLink* link = rep->GetAnnotationLink();
   if (this->TreeVertexToEdge->GetInputConnection(0, 0)->GetProducer() != link)
     {
     this->SetAnnotationLink(link);
     }
-  
+
   this->Superclass::PrepareForRendering();
 }
 
@@ -633,6 +633,6 @@ void vtkLineageView::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "EdgeWeightField: " 
-     << (this->EdgeWeightField ? this->EdgeWeightField : "(none)") << endl;   
+  os << indent << "EdgeWeightField: "
+     << (this->EdgeWeightField ? this->EdgeWeightField : "(none)") << endl;
 }
