@@ -41,8 +41,7 @@
 #include <vtkVolumeViewer.h>
 #include <vtkXMLImageDataReader.h>
 
-#include <vtksys/stl/vector>
-using vtksys_stl::vector;
+#include <vector>
 
 class CellLineageUpdater : public vtkCommand
 {
@@ -56,17 +55,21 @@ public:
     view->AddObserver(vtkCommand::SelectionChangedEvent, this);
   }
 
-  virtual void Execute(vtkObject* caller, unsigned long e, void*)
+  virtual void Execute(vtkObject* , unsigned long , void*)
   {
-    for (vector<vtkView*>::size_type i = 0; i < this->Views.size(); i++)
+    std::vector< vtkView* >::iterator it = Views.begin();
+    std::vector< vtkView* >::iterator end = Views.end();
+
+    while( it != end )
       {
-      this->Views[i]->Update();
+      (*it)->Update();
+      ++it;
       }
   }
 private:
   CellLineageUpdater() { }
   ~CellLineageUpdater() { }
-  vector<vtkView*> Views;
+  std::vector<vtkView*> Views;
 };
 
 // Constructor
@@ -404,7 +407,7 @@ void CellLineage::slotOpenGeneData()
 
   // Make a list of gene names
   // Make GeneToTableRow map
-  map<vtkStdString, vtkIdType>::iterator it, itEnd;
+  std::map<vtkStdString, vtkIdType>::iterator it, itEnd;
   it = this->GeneToVertex.begin();
   itEnd = this->GeneToVertex.end();
   QList<QStandardItem*> genes;

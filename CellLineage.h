@@ -12,8 +12,7 @@
 #include "vtkSmartPointer.h"    // Required for smart pointer internal ivars.
 #include "vtkStdString.h"
 
-#include <vtksys/stl/map>
-using vtksys_stl::map;
+#include <map>
 
 // Forward Qt class declarations
 class Ui_CellLineage;
@@ -164,10 +163,10 @@ private:
   CellLineageUpdater* Updater;
   vtkEventQtSlotConnect* Connect;
 
-  map<vtkStdString, vtkIdType> CellToVertex;
-  map<vtkStdString, vtkIdType> GeneToVertex;
-  map<vtkStdString, vtkIdType> CellToTreePedigree;
-  map<vtkStdString, vtkIdType> GeneToTableRow;
+  std::map<vtkStdString, vtkIdType> CellToVertex;
+  std::map<vtkStdString, vtkIdType> GeneToVertex;
+  std::map<vtkStdString, vtkIdType> CellToTreePedigree;
+  std::map<vtkStdString, vtkIdType> GeneToTableRow;
 
   // Designer form
   Ui_CellLineage *ui;
