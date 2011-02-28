@@ -87,25 +87,11 @@
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
-               <widget class="QVTKWidget" name="vtkLineageViewWidget" native="true">
+               <widget class="QVTKWidget" name="vtkLineageViewWidget">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>1</horstretch>
                   <verstretch>1</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>300</width>
-                  <height>150</height>
-                 </size>
-                </property>
-               </widget>
-               <widget class="QVTKWidget" name="vtkVolumeViewWidget" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="minimumSize">
@@ -366,16 +352,6 @@
                <item>
                 <widget class="QSliderLineEdit" name="timeSlider" native="true"/>
                </item>
-               <item>
-                <widget class="QVCRWidget" name="vcr" native="true">
-                 <property name="maximumSize">
-                  <size>
-                   <width>300</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </widget>
             </item>
@@ -404,8 +380,6 @@
      <string>File</string>
     </property>
     <addaction name="actionOpenLineageFile"/>
-    <addaction name="actionOpenDataFile"/>
-    <addaction name="actionOpenGeneData"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -429,23 +403,9 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpenLineageFile"/>
-   <addaction name="actionOpenDataFile"/>
-   <addaction name="actionOpenGeneData"/>
    <addaction name="separator"/>
    <addaction name="actionExit"/>
   </widget>
-  <action name="actionOpenDataFile">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="Icons/FamFamFamIcons.qrc">
-     <normaloff>:/icons/folder_image.png</normaloff>:/icons/folder_image.png</iconset>
-   </property>
-   <property name="text">
-    <string>Open Volume Time Series...</string>
-   </property>
-  </action>
   <action name="actionExit">
    <property name="icon">
     <iconset resource="Icons/FamFamFamIcons.qrc">
@@ -470,31 +430,17 @@
     <string>Open Lineage Tree</string>
    </property>
   </action>
-  <action name="actionOpenGeneData">
-   <property name="icon">
-    <iconset resource="Icons/FamFamFamIcons.qrc">
-     <normaloff>:/icons/folder_table.png</normaloff>:/icons/folder_table.png</iconset>
-   </property>
-   <property name="text">
-    <string>Open Gene Expression Data...</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QSliderLineEdit</class>
-   <extends>QWidget</extends>
-   <header>QSliderLineEdit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QVCRWidget</class>
-   <extends>QWidget</extends>
-   <header>QVCRWidget.h</header>
-  </customwidget>
   <customwidget>
    <class>QVTKWidget</class>
    <extends>QWidget</extends>
    <header>QVTKWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QSliderLineEdit</class>
+   <extends>QWidget</extends>
+   <header>QSliderLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -38,11 +38,8 @@
 #include <vtkQtTreeModelAdapter.h>
 #include <vtkVariant.h>
 #include <vtkViewTheme.h>
-#include <vtkVolumeViewer.h>
-#include <vtkXMLImageDataReader.h>
 
-#include <vtksys/stl/vector>
-using vtksys_stl::vector;
+#include <vector>
 
 class CellLineageUpdater : public vtkCommand
 {
@@ -58,15 +55,22 @@ public:
 
   virtual void Execute(vtkObject* caller, unsigned long e, void*)
   {
-    for (vector<vtkView*>::size_type i = 0; i < this->Views.size(); i++)
+    (void) caller;
+    (void) e;
+
+    std::vector<vtkView*>::iterator it = this->Views.begin();
+    std::vector<vtkView*>::iterator end = this->Views.end();
+
+    while( it != end )
       {
-      this->Views[i]->Update();
+      (*it)->Update();
+      ++it;
       }
   }
 private:
   CellLineageUpdater() { }
   ~CellLineageUpdater() { }
-  vector<vtkView*> Views;
+  std::vector<vtkView*> Views;
 };
 
 // Constructor
@@ -79,8 +83,6 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
 
   this->LineageReader       = vtkTreeReader::New();
   this->LineageView         = vtkLineageView::New();
-  this->VolumeReader        = vtkXMLImageDataReader::New();
-  this->VolumeView          = vtkVolumeViewer::New();
   this->QtTreeView          = vtkQtTreeView::New();
   this->AnnotationLink      = vtkAnnotationLink::New();
   this->Updater             = CellLineageUpdater::New();
@@ -102,9 +104,6 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
   // Lineage Viewer needs to get my render window
   this->LineageView->SetInteractor(this->ui->vtkLineageViewWidget->GetInteractor());
   this->ui->vtkLineageViewWidget->SetRenderWindow(this->LineageView->GetRenderWindow());
-
-  // Volume Viewer needs to get my render window
-  this->VolumeView->SetRenderWindow(this->ui->vtkVolumeViewWidget->GetRenderWindow());
 
   // Lineage view parameters
   connect(this->ui->collapseModeCheckBox, SIGNAL(stateChanged(int)),
@@ -139,17 +138,9 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
     this, SLOT(slotSetGlobalTimeValue(int)));
   connect(this->ui->timeSlider, SIGNAL(sliderMoved(int)),
     this, SLOT(slotGlobalTimeValueChanging(int)));
-  connect(this->ui->vcr, SIGNAL(play()), this, SLOT(slotVCRPlay()));
-  connect(this->ui->vcr, SIGNAL(pause()), this, SLOT(slotVCRPause()));
-  connect(this->ui->vcr, SIGNAL(back()), this, SLOT(slotVCRBack()));
-  connect(this->ui->vcr, SIGNAL(forward()), this, SLOT(slotVCRForward()));
-  connect(this->ui->vcr, SIGNAL(first()), this, SLOT(slotVCRFirst()));
-  connect(this->ui->vcr, SIGNAL(last()), this, SLOT(slotVCRLast()));
 
   // Application signals and slots
   connect(this->ui->actionOpenLineageFile, SIGNAL(triggered()), this, SLOT(slotOpenLineageData()));
-  connect(this->ui->actionOpenGeneData, SIGNAL(triggered()), this, SLOT(slotOpenGeneData()));
-  connect(this->ui->actionOpenDataFile, SIGNAL(triggered()), this, SLOT(slotOpenVolumeData()));
   connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
 
   this->SelectingGenesFromCells = false;
@@ -160,8 +151,6 @@ CellLineage::~CellLineage()
 {
   this->LineageReader->Delete();
   this->LineageView->Delete();
-  this->VolumeReader->Delete();
-  this->VolumeView->Delete();
   this->QtTreeView->Delete();
   this->AnnotationLink->Delete();
   this->Updater->Delete();
@@ -202,14 +191,8 @@ void CellLineage::slotSetGlobalTimeValue(int value)
   // Put mouse into busy mode
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-  // Read in volume data
-  this->readVolumeDataTimeStep(this->globalTime);
-
   // Set the value of the slider and line edit.
   this->ui->timeSlider->setValue(value);
-
-  // Have the volume view update itself
-  this->VolumeView->UpdateView();
 
   // Have the lineage view update itself
   this->LineageView->SetCurrentTime(value);
@@ -217,39 +200,6 @@ void CellLineage::slotSetGlobalTimeValue(int value)
 
   // Have default cursor come back
   QApplication::restoreOverrideCursor();
-}
-
-// Description:
-// VCR Slots
-void CellLineage::slotVCRPlay()
-{
-  this->globalTime++;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRPause()
-{
-  this->globalTime;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRBack()
-{
-  this->globalTime--;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRForward()
-{
-  this->globalTime++;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRFirst()
-{
-  this->globalTime = 1;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRLast()
-{
-  this->globalTime = 99;
-  slotSetGlobalTimeValue(this->globalTime);
 }
 
 // Description:
@@ -404,7 +354,7 @@ void CellLineage::slotOpenGeneData()
 
   // Make a list of gene names
   // Make GeneToTableRow map
-  map<vtkStdString, vtkIdType>::iterator it, itEnd;
+  std::map<vtkStdString, vtkIdType>::iterator it, itEnd;
   it = this->GeneToVertex.begin();
   itEnd = this->GeneToVertex.end();
   QList<QStandardItem*> genes;
@@ -633,63 +583,6 @@ int CellLineage::readLineageData()
   // Create lineage reader
   this->LineageReader->SetFileName( fileName.toAscii() );
   this->LineageReader->Update();
-  return 0;
-}
-
-// Action to be taken upon volume file open
-void CellLineage::slotOpenVolumeData()
-{
-  // Browse for and read the lineage data
-  if (this->readVolumeData())
-    {
-    return;
-    }
-
-  // Set up the volume view of this data
-  this->VolumeView->SetInputConnection(this->VolumeReader->GetOutputPort(0));
-}
-
-// Browse for and read in the volume data
-int CellLineage::readVolumeData()
-{
-
-  // Open the lineage data file
-  QString fileName = QFileDialog::getOpenFileName(
-    this,
-    "Select the first volume time series file",
-    QDir::homePath(),
-    "Volume Data (*.vti);;All Files (*.*)");
-
-  if (fileName.isNull())
-    {
-    return -1;
-    }
-
-  // Grab the data directory for the volume data
-  QFileInfo info(fileName);
-  this->volumeDataDir = info.path();
-
-  // Create volume reader
-  this->VolumeReader->SetFileName( fileName.toAscii() );
-  this->VolumeReader->Update();
-  return 0;
-}
-
-// Description: Open a specific timestep (do not browse)
-int CellLineage::readVolumeDataTimeStep(int timeStep)
-{
-  int volumeTime = (timeStep - 37)/3;
-  if (volumeTime < 0) volumeTime = 0;
-
-  // Hack alert this method makes lots of hardcode assumptions
-  QString file_pattern;
-  file_pattern.sprintf("%s/cache%d.vti", this->volumeDataDir.toAscii().data(), volumeTime);
-
-  // Read in this particular file (time step)
-  this->VolumeReader->SetFileName( file_pattern.toAscii() );
-  this->VolumeReader->Update();
-
-  // Success I guess
   return 0;
 }
 

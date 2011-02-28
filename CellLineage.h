@@ -12,8 +12,7 @@
 #include "vtkSmartPointer.h"    // Required for smart pointer internal ivars.
 #include "vtkStdString.h"
 
-#include <vtksys/stl/map>
-using vtksys_stl::map;
+#include <map>
 
 // Forward Qt class declarations
 class Ui_CellLineage;
@@ -51,7 +50,6 @@ public slots:
   // Application slots
   virtual void slotOpenLineageData();
   virtual void slotOpenGeneData();
-  virtual void slotOpenVolumeData();
   virtual void slotExit();
 
   // Description:
@@ -122,27 +120,12 @@ protected slots:
   // Select genes expressed in cells
   void slotSelectGenesFromCells(vtkObject*, unsigned long, void*, void*);
 
-  // Description:
-  // VCR slots
-  void slotVCRPlay();
-  void slotVCRPause();
-  void slotVCRBack();
-  void slotVCRForward();
-  void slotVCRFirst();
-  void slotVCRLast();
-
 private:
 
   // Methods
 
   // Description: Browse for and read the Lineage data
   int readLineageData();
-
-  // Description: Browse for and read the volume data
-  int readVolumeData();
-
-  // Description: Open a specific timestep (do not browse)
-  int readVolumeDataTimeStep(int timeStep);
 
   // Description: Set up the Lineage list view of the data
   void setUpLineageListView();
@@ -151,12 +134,9 @@ private:
   vtkTreeReader*           LineageReader;
   vtkLineageView*          LineageView;
   vtkDataRepresentation*   LineageViewRep;
-  vtkXMLImageDataReader*   VolumeReader;
-  vtkVolumeViewer*         VolumeView;
   vtkQtTreeView*           QtTreeView;
   vtkDataRepresentation*   QtTreeViewRep;
   vtkAnnotationLink*       AnnotationLink;
-  QString volumeDataDir;
   vtkTable* GeneTable;
   vtkGraph* GeneGraph;
   bool SelectingGenesFromCells;
@@ -164,10 +144,10 @@ private:
   CellLineageUpdater* Updater;
   vtkEventQtSlotConnect* Connect;
 
-  map<vtkStdString, vtkIdType> CellToVertex;
-  map<vtkStdString, vtkIdType> GeneToVertex;
-  map<vtkStdString, vtkIdType> CellToTreePedigree;
-  map<vtkStdString, vtkIdType> GeneToTableRow;
+  std::map<vtkStdString, vtkIdType> CellToVertex;
+  std::map<vtkStdString, vtkIdType> GeneToVertex;
+  std::map<vtkStdString, vtkIdType> CellToTreePedigree;
+  std::map<vtkStdString, vtkIdType> GeneToTableRow;
 
   // Designer form
   Ui_CellLineage *ui;
