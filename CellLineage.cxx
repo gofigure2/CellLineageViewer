@@ -583,12 +583,20 @@ void CellLineage::slotOpenLineageData()
     this, SLOT(slotSelectionChanged()));
 
   // Update combo boxes (fill content with arrays names)
-  //LineageReader->Get
+  // how many fields do we have?
+  int numberOfArrays = LineageReader->GetOutput()->GetVertexData()->GetNumberOfArrays();
   this->ui->scaleType->clear();
-  this->ui->scaleType->addItem("scale item");
-
   this->ui->colorCodeType->clear();
-  this->ui->colorCodeType->addItem("color item");
+
+  // fill comboxes according to the data
+  for(int i=0;i<numberOfArrays; i++)
+    {
+    const char* name =
+        LineageReader->GetOutput()->GetVertexData()->GetArrayName(i);
+    this->ui->scaleType->addItem(name);
+    this->ui->colorCodeType->addItem(name);
+    }
+
   // init color code / active scalar
   // init scale
 }
