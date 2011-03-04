@@ -591,14 +591,21 @@ void CellLineage::slotOpenLineageData()
     {
     const char* name =
         LineageReader->GetOutput()->GetVertexData()->GetArrayName(i);
-    this->ui->scaleType->addItem(name);
-    this->ui->colorCodeType->addItem(name);
+    // if data array (i.e. numbers), add it
+    if(LineageReader->GetOutput()->GetVertexData()->GetArray(name))
+      {
+      this->ui->scaleType->addItem(name);
+      this->ui->colorCodeType->addItem(name);
+      }
     }
 
   // set the active scalar, update mappers and LUTs
-  const char* activeScalar = this->ui->colorCodeType->currentText().toLocal8Bit().data();
-  this->LineageView->UpdateMappersForColorCoding(activeScalar, 0, 100);
+  char* activeScalar = this->ui->colorCodeType->currentText().toLocal8Bit().data();
+  double* range =
+      LineageReader->GetOutput()->GetVertexData()->GetArray(activeScalar)->GetRange();
+  this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1]);
   this->LineageView->SetVertexColorFieldName(activeScalar);
+  this->LineageView->SetEdgeColorFieldName(activeScalar);
   // set active scalars somewhere....
 }
 //----------------------------------------------------------------------------
@@ -632,9 +639,11 @@ void CellLineage::slotEnableColorCode(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeColorCode(QString array)
 {
-  //double* range = LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
-  this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), 0, 100);
+  double* range =
+      LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
+  this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1]);
   this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
+  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
   this->LineageView->SetEdgeScalarVisibility(this->ui->scaleBy->isChecked());
   this->LineageView->Render();
 }
