@@ -128,8 +128,6 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
     this, SLOT(slotSetElbow(int)));
   connect(this->ui->elbowAngleSlider, SIGNAL(valueChanged(int)),
     this, SLOT(slotSetElbowAngle(int)));
-  connect(this->ui->colorEdgesCheckBox, SIGNAL(stateChanged(int)),
-    this, SLOT(slotSetColorEdges(int)));
   // new slots
   //for scaling - should turn it on by default?
   connect(this->ui->scaleBy, SIGNAL(stateChanged(int)),
@@ -314,14 +312,6 @@ void CellLineage::slotSetRadialLayout(int radial)
     this->ui->radialLayoutAngleSpinBox->setMaximum(360);
     }
   this->LineageView->SetRadialLayout(radial);
-  this->LineageView->Render();
-}
-
-// Description:
-// Set whether to color edges by a scalar.
-void CellLineage::slotSetColorEdges(int value)
-{
-  this->LineageView->SetEdgeScalarVisibility(value);
   this->LineageView->Render();
 }
 

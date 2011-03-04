@@ -139,9 +139,9 @@
               <property name="title">
                <string>Appearance Control</string>
               </property>
-              <layout class="QGridLayout" name="gridLayout">
-               <item row="0" column="0" colspan="2">
-                <layout class="QVBoxLayout">
+              <layout class="QGridLayout" name="gridLayout_3">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout">
                  <property name="spacing">
                   <number>6</number>
                  </property>
@@ -149,225 +149,223 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <layout class="QHBoxLayout">
-                   <property name="spacing">
-                    <number>6</number>
+                  <widget class="QCheckBox" name="radialLayoutCheckBox">
+                   <property name="text">
+                    <string>Radial</string>
                    </property>
-                   <property name="margin">
-                    <number>0</number>
+                   <property name="checked">
+                    <bool>true</bool>
                    </property>
-                   <item>
-                    <widget class="QCheckBox" name="radialLayoutCheckBox">
-                     <property name="text">
-                      <string>Radial</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="colorEdgesCheckBox">
-                     <property name="text">
-                      <string>Color By Time</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout">
-                   <property name="spacing">
-                    <number>6</number>
-                   </property>
-                   <property name="margin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QCheckBox" name="isoContourCheckBox">
-                     <property name="text">
-                      <string>IsoContour</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="collapseModeCheckBox">
-                     <property name="text">
-                      <string>Collapse Mode</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="labelsCheckBox">
-                     <property name="text">
-                      <string>Labels</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="backPlaneCheckBox">
-                     <property name="text">
-                      <string>Back Plane</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout">
-                   <property name="spacing">
-                    <number>6</number>
-                   </property>
-                   <property name="margin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QLabel" name="label">
-                     <property name="text">
-                      <string>   Layout Angle</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="radialLayoutAngleSpinBox">
-                     <property name="minimum">
-                      <number>90</number>
-                     </property>
-                     <property name="maximum">
-                      <number>360</number>
-                     </property>
-                     <property name="singleStep">
-                      <number>10</number>
-                     </property>
-                     <property name="value">
-                      <number>360</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label2">
-                     <property name="text">
-                      <string>Log Spacing</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QDoubleSpinBox" name="logSpacingSpinBox">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="decimals">
-                      <number>1</number>
-                     </property>
-                     <property name="minimum">
-                      <double>0.100000000000000</double>
-                     </property>
-                     <property name="maximum">
-                      <double>1.000000000000000</double>
-                     </property>
-                     <property name="singleStep">
-                      <double>0.100000000000000</double>
-                     </property>
-                     <property name="value">
-                      <double>1.000000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout">
-                   <property name="spacing">
-                    <number>6</number>
-                   </property>
-                   <property name="margin">
-                    <number>8</number>
-                   </property>
-                   <item>
-                    <widget class="QCheckBox" name="elbowCheckBox">
-                     <property name="text">
-                      <string>Elbow</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_2">
-                     <property name="text">
-                      <string>Angle</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSlider" name="elbowAngleSlider">
-                     <property name="minimum">
-                      <number>-100</number>
-                     </property>
-                     <property name="maximum">
-                      <number>100</number>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  </widget>
                  </item>
                 </layout>
                </item>
-               <item row="1" column="0">
-                <widget class="QCheckBox" name="scaleBy">
-                 <property name="text">
-                  <string>Scale by</string>
+               <item row="1" column="0" colspan="2">
+                <layout class="QHBoxLayout">
+                 <property name="spacing">
+                  <number>6</number>
                  </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="scaleType">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                 <property name="margin">
+                  <number>0</number>
                  </property>
-                </widget>
+                 <item>
+                  <widget class="QCheckBox" name="isoContourCheckBox">
+                   <property name="text">
+                    <string>IsoContour</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="collapseModeCheckBox">
+                   <property name="text">
+                    <string>Collapse Mode</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="labelsCheckBox">
+                   <property name="text">
+                    <string>Labels</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="backPlaneCheckBox">
+                   <property name="text">
+                    <string>Back Plane</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
-               <item row="1" column="2">
+               <item row="2" column="0" colspan="2">
+                <layout class="QHBoxLayout">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="margin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>   Layout Angle</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="radialLayoutAngleSpinBox">
+                   <property name="minimum">
+                    <number>90</number>
+                   </property>
+                   <property name="maximum">
+                    <number>360</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>360</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label2">
+                   <property name="text">
+                    <string>Log Spacing</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="logSpacingSpinBox">
+                   <property name="maximumSize">
+                    <size>
+                     <width>60</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="decimals">
+                    <number>1</number>
+                   </property>
+                   <property name="minimum">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="maximum">
+                    <double>1.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="3" column="0">
+                <layout class="QHBoxLayout">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="margin">
+                  <number>8</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="elbowCheckBox">
+                   <property name="text">
+                    <string>Elbow</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="text">
+                    <string>Angle</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="elbowAngleSlider">
+                   <property name="minimum">
+                    <number>-100</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="0">
+                <layout class="QGridLayout" name="gridLayout">
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="scaleBy">
+                   <property name="text">
+                    <string>Scale by</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="scaleType">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="1">
                 <spacer name="horizontalSpacer">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Maximum</enum>
-                 </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>40</width>
+                   <width>203</width>
                    <height>20</height>
                   </size>
                  </property>
                 </spacer>
                </item>
-               <item row="2" column="0">
-                <widget class="QCheckBox" name="colorCodeBy">
-                 <property name="text">
-                  <string>Color Code by</string>
-                 </property>
-                </widget>
+               <item row="5" column="0">
+                <layout class="QGridLayout" name="gridLayout_2">
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="colorCodeBy">
+                   <property name="text">
+                    <string>Color Code by</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QComboBox" name="colorCodeType"/>
+                 </item>
+                </layout>
                </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="colorCodeType"/>
+               <item row="5" column="1">
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>203</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </widget>

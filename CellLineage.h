@@ -82,10 +82,6 @@ public slots:
   void slotSetIsoContour(int state);
 
   // Description:
-  // Set whether to color edges
-  void slotSetColorEdges(int state);
-
-  // Description:
   // Set when elbow is turned on
   void slotSetElbow(int state);
 
