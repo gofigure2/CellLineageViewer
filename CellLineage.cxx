@@ -133,6 +133,15 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
   connect(this->ui->colorEdgesCheckBox, SIGNAL(stateChanged(int)),
     this, SLOT(slotSetColorEdges(int)));
   slotSetDistanceByTime(1);
+  // new slots
+  //for scaling
+  connect(this->ui->scaleBy, SIGNAL(stateChanged(int)),
+    this, SLOT(slotEnableScale(int)));
+  connect(this->ui->scaleType, SIGNAL(currentIndexChanged(QString)),
+    this, SLOT(slotChangeScale(QString)));
+  // color coding
+  connect(this->ui->colorCodeBy, SIGNAL(stateChanged(int)),
+    this, SLOT(slotEnableColorCode(int)));
 
   // Time controls
   this->globalTime = 1; // Start time at 1 :)
@@ -598,7 +607,26 @@ void CellLineage::slotOpenLineageData()
     }
 
   // init color code / active scalar
-  // init scale
+  // init scale - nothing to do, just connect the signal
+}
+void CellLineage::slotEnableScale(int state)
+{
+  this->LineageView->SetDistanceArrayName
+  (state ? this->ui->scaleType->currentText().toLocal8Bit().data() : NULL);
+  this->LineageView->Render();
+}
+
+void CellLineage::slotChangeScale(QString array)
+{
+  this->LineageView->SetDistanceArrayName
+  (this->ui->scaleBy->isChecked() ? array.toLocal8Bit().data() : NULL);
+  this->LineageView->Render();
+}
+
+void CellLineage::slotEnableColorCode(int state)
+{
+  //this->LineageView->SetDistanceArrayName(state ? "XPos" : NULL);
+  //this->LineageView->Render();
 }
 
 void CellLineage::slotSetDistanceByTime(int state)

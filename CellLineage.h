@@ -97,6 +97,11 @@ public slots:
   // Set when distance by time is turned on
   void slotSetDistanceByTime(int state);
 
+  void slotEnableScale(int state);
+  void slotChangeScale(QString array);
+
+  void slotEnableColorCode(int state);
+
 protected:
 
 protected slots:
