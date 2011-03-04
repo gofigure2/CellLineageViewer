@@ -601,11 +601,11 @@ void CellLineage::slotOpenLineageData()
 
   // set the active scalar, update mappers and LUTs
   char* activeScalar = this->ui->colorCodeType->currentText().toLocal8Bit().data();
+  this->LineageView->SetVertexColorFieldName(activeScalar);
+  this->LineageView->SetEdgeColorFieldName(activeScalar);
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(activeScalar)->GetRange();
   this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1]);
-  this->LineageView->SetVertexColorFieldName(activeScalar);
-  this->LineageView->SetEdgeColorFieldName(activeScalar);
   // set active scalars somewhere....
 }
 //----------------------------------------------------------------------------
@@ -639,11 +639,11 @@ void CellLineage::slotEnableColorCode(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeColorCode(QString array)
 {
+  this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
+  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
   this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1]);
-  this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
-  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
   this->LineageView->SetEdgeScalarVisibility(this->ui->scaleBy->isChecked());
   this->LineageView->Render();
 }
