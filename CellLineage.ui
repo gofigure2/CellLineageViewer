@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>793</width>
-    <height>678</height>
+    <width>799</width>
+    <height>687</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -160,16 +160,6 @@
                     <widget class="QCheckBox" name="radialLayoutCheckBox">
                      <property name="text">
                       <string>Radial</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="distanceCheckBox">
-                     <property name="text">
-                      <string>Scale Distance By Time</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -432,7 +422,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>793</width>
+     <width>799</width>
      <height>25</height>
     </rect>
    </property>

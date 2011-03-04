@@ -128,13 +128,10 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
     this, SLOT(slotSetElbow(int)));
   connect(this->ui->elbowAngleSlider, SIGNAL(valueChanged(int)),
     this, SLOT(slotSetElbowAngle(int)));
-  connect(this->ui->distanceCheckBox, SIGNAL(stateChanged(int)),
-    this, SLOT(slotSetDistanceByTime(int)));
   connect(this->ui->colorEdgesCheckBox, SIGNAL(stateChanged(int)),
     this, SLOT(slotSetColorEdges(int)));
-  slotSetDistanceByTime(1);
   // new slots
-  //for scaling
+  //for scaling - should turn it on by default?
   connect(this->ui->scaleBy, SIGNAL(stateChanged(int)),
     this, SLOT(slotEnableScale(int)));
   connect(this->ui->scaleType, SIGNAL(currentIndexChanged(QString)),
@@ -627,12 +624,6 @@ void CellLineage::slotEnableColorCode(int state)
 {
   //this->LineageView->SetDistanceArrayName(state ? "XPos" : NULL);
   //this->LineageView->Render();
-}
-
-void CellLineage::slotSetDistanceByTime(int state)
-{
-  this->LineageView->SetDistanceArrayName(state ? "XPos" : NULL);
-  this->LineageView->Render();
 }
 
 void CellLineage::slotSetElbow(int state)

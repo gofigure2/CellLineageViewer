@@ -93,10 +93,6 @@ public slots:
   // Set the elbow angle
   void slotSetElbowAngle(int value);
 
-  // Description:
-  // Set when distance by time is turned on
-  void slotSetDistanceByTime(int state);
-
   void slotEnableScale(int state);
   void slotChangeScale(QString array);
 
