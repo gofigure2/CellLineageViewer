@@ -581,11 +581,21 @@ void CellLineage::slotOpenLineageData()
   this->Connect->Connect(this->QtTreeView->GetRepresentation(),
     vtkCommand::SelectionChangedEvent,
     this, SLOT(slotSelectionChanged()));
+
+  // Update combo boxes (fill content with arrays names)
+  //LineageReader->Get
+  this->ui->scaleType->clear();
+  this->ui->scaleType->addItem("scale item");
+
+  this->ui->colorCodeType->clear();
+  this->ui->colorCodeType->addItem("color item");
+  // init color code / active scalar
+  // init scale
 }
 
 void CellLineage::slotSetDistanceByTime(int state)
 {
-  this->LineageView->SetDistanceArrayName(state ? "EndTime" : NULL);
+  this->LineageView->SetDistanceArrayName(state ? "XPos" : NULL);
   this->LineageView->Render();
 }
 

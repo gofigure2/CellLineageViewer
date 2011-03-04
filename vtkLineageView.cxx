@@ -104,8 +104,10 @@ vtkLineageView::vtkLineageView()
   this->TreeVertexToEdge      = vtkSmartPointer<vtkTreeVertexToEdgeSelection>::New();
   this->CollapsedThreshold    = vtkSmartPointer<vtkThresholdPoints>::New();
   this->EdgeWeightField       = 0;
-  this->MinTime               = 0.0;
-  this->MaxTime               = 37+3*99;
+  // For the lookup table
+  this->MinTime               = 1.0;
+  this->MaxTime               = 219.0;
+  // why?
   this->CurrentTime           = 0.0;
 
   this->BlockUpdate = 0;
@@ -119,6 +121,8 @@ vtkLineageView::vtkLineageView()
   this->SetInteractionModeTo2D();
 
   // Set up some the default parameters
+  // this array represents the labels which will be displayed
+  // and the first column in the vtkQtTreeView
   this->LabeledDataMapper->SetFieldDataName("name");
   this->LabeledDataMapper->SetLabelModeToLabelFieldData();
   this->LabeledDataMapper->GetLabelTextProperty()->SetColor(0,0,0);
@@ -141,7 +145,8 @@ vtkLineageView::vtkLineageView()
   this->IsoActor->GetProperty()->SetLineWidth(5);
   this->SmoothContour->SetSubdivideToLength();
   this->SmoothContour->SetLength(.01);
-  this->PlaneMapper->ColorByArrayComponent("StartTime", 0);
+  // For color coding
+  this->PlaneMapper->ColorByArrayComponent("XPos", 0);
 
   // Okay setup the internal pipeline
   this->SetupPipeline();
@@ -336,7 +341,8 @@ void vtkLineageView::SetupPipeline()
   this->CollapsedGlyphMapper->SetInputConnection(this->CollapsedNodes->GetOutputPort());
 
   // Set up mapper parameters
-  this->PlaneMapper->ColorByArrayComponent("StartTime", 0);
+  // For the color Coding
+  this->PlaneMapper->ColorByArrayComponent("XPos", 0);
   this->PlaneMapper->SetScalarRange( this->MinTime, this->MaxTime);
   this->GlyphMapper->SetLookupTable(ColorLUT);
   this->GlyphMapper->SetScalarRange( this->MinTime, this->MaxTime);
