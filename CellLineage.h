@@ -97,6 +97,7 @@ public slots:
   void slotChangeScale(QString array);
 
   void slotEnableColorCode(int state);
+  void slotChangeColorCode(QString array);
 
 protected:
 

@@ -71,6 +71,9 @@ public:
   vtkTypeRevisionMacro(vtkLineageView, vtkRenderView);
   void PrintSelf(ostream& os, vtkIndent indent);
   
+  void UpdateMappersForColorCoding(const char* iArray,
+      int iMinValue, int iMaxValue);
+
   // Description:
   // The name of the vertex field used for coloring the vertices
   virtual void SetVertexColorFieldName(const char *field);
@@ -124,9 +127,7 @@ public:
   virtual void SetIsoContour(bool state);
   
   // Description:
-  // Set the min,max,current time
-  vtkSetMacro(MinTime, double);
-  vtkSetMacro(MaxTime, double);
+  // Set the current time
   void SetCurrentTime(double time_value);
 
   // Description:

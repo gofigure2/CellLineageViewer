@@ -104,9 +104,6 @@ vtkLineageView::vtkLineageView()
   this->TreeVertexToEdge      = vtkSmartPointer<vtkTreeVertexToEdgeSelection>::New();
   this->CollapsedThreshold    = vtkSmartPointer<vtkThresholdPoints>::New();
   this->EdgeWeightField       = 0;
-  // For the lookup table
-  this->MinTime               = 1.0;
-  this->MaxTime               = 219.0;
   // why?
   this->CurrentTime           = 0.0;
 
@@ -145,8 +142,6 @@ vtkLineageView::vtkLineageView()
   this->IsoActor->GetProperty()->SetLineWidth(5);
   this->SmoothContour->SetSubdivideToLength();
   this->SmoothContour->SetLength(.01);
-  // For color coding
-  this->PlaneMapper->ColorByArrayComponent("XPos", 0);
 
   // Okay setup the internal pipeline
   this->SetupPipeline();
@@ -342,16 +337,7 @@ void vtkLineageView::SetupPipeline()
 
   // Set up mapper parameters
   // For the color Coding
-  this->PlaneMapper->ColorByArrayComponent("XPos", 0);
-  this->PlaneMapper->SetScalarRange( this->MinTime, this->MaxTime);
-  this->GlyphMapper->SetLookupTable(ColorLUT);
-  this->GlyphMapper->SetScalarRange( this->MinTime, this->MaxTime);
-  this->IsoLineMapper->SetLookupTable(ColorLUT);
-  this->IsoLineMapper->SetScalarRange( this->MinTime, this->MaxTime);
-  this->SelectionMapper->SetScalarVisibility(false);
-  this->CollapseMapper->SetLookupTable(ColorLUT);
-  this->CollapseMapper->SetScalarRange( this->MinTime, this->MaxTime);
-  this->CollapsedGlyphMapper->SetScalarVisibility(false);
+  UpdateMappersForColorCoding(NULL, 0, 0);
 
   // Set mappers to actors
   this->IsoActor->SetMapper(this->IsoLineMapper);
@@ -371,6 +357,21 @@ void vtkLineageView::SetupPipeline()
 
   // Add actors to renderer
   this->Renderer->SetBackground(1.0, 1.0, 1.0);
+}
+
+void vtkLineageView::UpdateMappersForColorCoding(const char* iArray,
+    int iMinValue, int iMaxValue)
+{
+  this->PlaneMapper->ColorByArrayComponent(iArray, 0);
+  this->PlaneMapper->SetScalarRange( iMinValue, iMaxValue);
+  this->GlyphMapper->SetLookupTable(ColorLUT);
+  this->GlyphMapper->SetScalarRange( iMinValue, iMaxValue);
+  this->IsoLineMapper->SetLookupTable(ColorLUT);
+  this->IsoLineMapper->SetScalarRange( iMinValue, iMaxValue);
+  this->SelectionMapper->SetScalarVisibility(false);
+  this->CollapseMapper->SetLookupTable(ColorLUT);
+  this->CollapseMapper->SetScalarRange( iMinValue, iMaxValue);
+  this->CollapsedGlyphMapper->SetScalarVisibility(false);
 }
 
 void vtkLineageView::SetVertexColorFieldName(const char *field)

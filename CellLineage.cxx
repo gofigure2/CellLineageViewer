@@ -139,6 +139,8 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
   // color coding
   connect(this->ui->colorCodeBy, SIGNAL(stateChanged(int)),
     this, SLOT(slotEnableColorCode(int)));
+  connect(this->ui->colorCodeType, SIGNAL(currentIndexChanged(QString)),
+    this, SLOT(slotChangeColorCode(QString)));
 
   // Time controls
   this->globalTime = 1; // Start time at 1 :)
@@ -603,29 +605,52 @@ void CellLineage::slotOpenLineageData()
     this->ui->colorCodeType->addItem(name);
     }
 
-  // init color code / active scalar
-  // init scale - nothing to do, just connect the signal
+  // set the active scalar, update mappers and LUTs
+  const char* activeScalar = this->ui->colorCodeType->currentText().toLocal8Bit().data();
+  this->LineageView->UpdateMappersForColorCoding(activeScalar, 0, 100);
+  this->LineageView->SetVertexColorFieldName(activeScalar);
+  // set active scalars somewhere....
 }
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 void CellLineage::slotEnableScale(int state)
 {
   this->LineageView->SetDistanceArrayName
   (state ? this->ui->scaleType->currentText().toLocal8Bit().data() : NULL);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void CellLineage::slotChangeScale(QString array)
 {
   this->LineageView->SetDistanceArrayName
   (this->ui->scaleBy->isChecked() ? array.toLocal8Bit().data() : NULL);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void CellLineage::slotEnableColorCode(int state)
 {
-  //this->LineageView->SetDistanceArrayName(state ? "XPos" : NULL);
-  //this->LineageView->Render();
+  this->LineageView->SetEdgeScalarVisibility(state);
+  this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
+void CellLineage::slotChangeColorCode(QString array)
+{
+  //double* range = LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
+  this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), 0, 100);
+  this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
+  this->LineageView->SetEdgeScalarVisibility(this->ui->scaleBy->isChecked());
+  this->LineageView->Render();
+}
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 void CellLineage::slotSetElbow(int state)
 {
   this->LineageView->SetElbow(state?1:0);
