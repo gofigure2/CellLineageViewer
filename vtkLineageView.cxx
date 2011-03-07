@@ -337,7 +337,7 @@ void vtkLineageView::SetupPipeline()
 
   // Set up mapper parameters
   // For the color Coding
-  UpdateMappersForColorCoding(NULL, 0, 0);
+  UpdateMappersForColorCoding(NULL, 0, 0, false);
 
   // Set mappers to actors
   this->IsoActor->SetMapper(this->IsoLineMapper);
@@ -360,7 +360,7 @@ void vtkLineageView::SetupPipeline()
 }
 
 void vtkLineageView::UpdateMappersForColorCoding(const char* iArray,
-    int iMinValue, int iMaxValue)
+    int iMinValue, int iMaxValue, bool iScalarVisibility)
 {
   this->PlaneMapper->ColorByArrayComponent(iArray, 0);
   this->PlaneMapper->SetScalarRange( iMinValue, iMaxValue);
@@ -368,10 +368,10 @@ void vtkLineageView::UpdateMappersForColorCoding(const char* iArray,
   this->GlyphMapper->SetScalarRange( iMinValue, iMaxValue);
   this->IsoLineMapper->SetLookupTable(ColorLUT);
   this->IsoLineMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->SelectionMapper->SetScalarVisibility(false);
+  this->SelectionMapper->SetScalarVisibility(iScalarVisibility);
   this->CollapseMapper->SetLookupTable(ColorLUT);
   this->CollapseMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->CollapsedGlyphMapper->SetScalarVisibility(false);
+  this->CollapsedGlyphMapper->SetScalarVisibility(iScalarVisibility);
 }
 
 void vtkLineageView::SetVertexColorFieldName(const char *field)

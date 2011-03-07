@@ -72,7 +72,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   
   void UpdateMappersForColorCoding(const char* iArray,
-      int iMinValue, int iMaxValue);
+      int iMinValue, int iMaxValue, bool iScalarVisibility);
 
   // Description:
   // The name of the vertex field used for coloring the vertices
