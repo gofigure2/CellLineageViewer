@@ -606,17 +606,20 @@ void CellLineage::slotOpenLineageData()
       LineageReader->GetOutput()->GetVertexData()->GetArray(activeScalar)->GetRange();
   this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1], false);
 
-  //this->ui->scaleBy->setChecked(false);
-  // color code is enabled by default...?
-  //this->ui->colorCodeBy->setChecked(false);
+  // enable scaling and color coding
+  this->ui->scaleBy->setChecked(true);
+  this->ui->colorCodeBy->setChecked(true);
 }
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void CellLineage::slotEnableScale(int state)
 {
+  //scale
   this->LineageView->SetDistanceArrayName
   (state ? this->ui->scaleType->currentText().toLocal8Bit().data() : NULL);
+
+  //update visu
   this->LineageView->Render();
 }
 //----------------------------------------------------------------------------
@@ -624,8 +627,11 @@ void CellLineage::slotEnableScale(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeScale(QString array)
 {
+  //scale
   this->LineageView->SetDistanceArrayName
   (this->ui->scaleBy->isChecked() ? array.toLocal8Bit().data() : NULL);
+
+  //update visu
   this->LineageView->Render();
 }
 //----------------------------------------------------------------------------
@@ -633,7 +639,10 @@ void CellLineage::slotChangeScale(QString array)
 //----------------------------------------------------------------------------
 void CellLineage::slotEnableColorCode(int state)
 {
+  // color
   this->LineageView->SetEdgeScalarVisibility(state);
+
+  //update visu
   this->LineageView->Render();
 }
 //----------------------------------------------------------------------------
@@ -641,11 +650,19 @@ void CellLineage::slotEnableColorCode(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeColorCode(QString array)
 {
+  // color
   LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(array.toLocal8Bit().data());
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
-  std::cout << "range: " << range[0] << " to " << range[1] << std::endl;
   this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1], true);
+
+  //scale
+  // update distance array name for the colors
+  this->LineageView->SetDistanceArrayName(array.toLocal8Bit().data());
+  // re-scale the tree properly
+  this->slotEnableScale( this->ui->scaleBy->isChecked() );
+
+  //update visu
   this->LineageView->Render();
 }
 //----------------------------------------------------------------------------
