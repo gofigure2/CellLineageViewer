@@ -302,6 +302,9 @@
                    <property name="text">
                     <string>Scale by</string>
                    </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
@@ -318,6 +321,9 @@
                   <widget class="QCheckBox" name="colorCodeBy">
                    <property name="text">
                     <string>Color Code by</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>

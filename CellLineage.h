@@ -91,6 +91,8 @@ public slots:
   void slotEnableColorCode(int state);
   void slotChangeColorCode(QString array);
 
+  void slotChangeLabel(QString array);
+
 protected:
 
 protected slots:
@@ -124,14 +126,8 @@ private:
   vtkQtTreeView*           QtTreeView;
   vtkDataRepresentation*   QtTreeViewRep;
   vtkAnnotationLink*       AnnotationLink;
-  QString volumeDataDir;
   CellLineageUpdater* Updater;
   vtkEventQtSlotConnect* Connect;
-
-  std::map<vtkStdString, vtkIdType> CellToVertex;
-  std::map<vtkStdString, vtkIdType> GeneToVertex;
-  std::map<vtkStdString, vtkIdType> CellToTreePedigree;
-  std::map<vtkStdString, vtkIdType> GeneToTableRow;
 
   // Designer form
   Ui_CellLineage *ui;

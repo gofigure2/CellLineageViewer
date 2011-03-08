@@ -132,6 +132,10 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
     this, SLOT(slotEnableColorCode(int)));
   connect(this->ui->colorCodeType, SIGNAL(currentIndexChanged(QString)),
     this, SLOT(slotChangeColorCode(QString)));
+  // labels
+  connect(this->ui->labelType, SIGNAL(currentIndexChanged(QString)),
+    this, SLOT(slotChangeLabel(QString)));
+
 
   // Time controls
   this->globalTime = 1; // Start time at 1 :)
@@ -331,6 +335,7 @@ void CellLineage::slotOpenLineageData()
   int numberOfArrays = LineageReader->GetOutput()->GetVertexData()->GetNumberOfArrays();
   this->ui->scaleType->clear();
   this->ui->colorCodeType->clear();
+  this->ui->labelType->clear();
 
   // fill comboxes according to the data
   for(int i=0;i<numberOfArrays; i++)
@@ -342,6 +347,7 @@ void CellLineage::slotOpenLineageData()
       {
       this->ui->scaleType->addItem(name);
       this->ui->colorCodeType->addItem(name);
+      this->ui->labelType->addItem(name);
       }
     }
 
@@ -351,10 +357,6 @@ void CellLineage::slotOpenLineageData()
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(activeScalar)->GetRange();
   this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1], false);
-
-  // enable scaling and color coding
-  this->ui->scaleBy->setChecked(true);
-  this->ui->colorCodeBy->setChecked(true);
 }
 //----------------------------------------------------------------------------
 
@@ -409,6 +411,28 @@ void CellLineage::slotChangeColorCode(QString array)
   // re-scale the tree properly
   this->slotEnableScale( this->ui->scaleBy->isChecked() );
 
+  //update visu
+  this->LineageView->Render();
+}
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+void CellLineage::slotChangeLabel(QString array)
+{
+	/*
+  // color
+  LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(array.toLocal8Bit().data());
+  double* range =
+      LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
+  this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1], true);
+
+  // scale
+  // update distance array name for the colors
+  //this->LineageView->SetDistanceArrayName(NULL);
+  this->LineageView->SetDistanceArrayName(array.toLocal8Bit().data());
+  // re-scale the tree properly
+  this->slotEnableScale( this->ui->scaleBy->isChecked() );
+*/
   //update visu
   this->LineageView->Render();
 }
