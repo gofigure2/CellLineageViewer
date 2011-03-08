@@ -367,6 +367,11 @@ void CellLineage::slotEnableScale(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeScale(QString array)
 {
+  if(!LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data()))
+    {
+    return;
+    }
+
   //scale
   this->LineageView->SetDistanceArrayName
   (this->ui->scaleBy->isChecked() ? array.toLocal8Bit().data() : NULL);
@@ -390,6 +395,11 @@ void CellLineage::slotEnableColorCode(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeColorCode(QString array)
 {
+  if(!LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data()))
+    {
+    return;
+    }
+
  this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
 
@@ -408,6 +418,11 @@ void CellLineage::slotChangeColorCode(QString array)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeLabel(QString array)
 {
+  if(!LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data()))
+    {
+    return;
+    }
+
   this->LineageView->SetLabelFieldName(array.toLocal8Bit().data());
 
   //update visu
