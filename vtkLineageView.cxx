@@ -109,15 +109,12 @@ vtkLineageView::vtkLineageView()
   // Replace the interactor style
   this->SetInteractionModeTo2D();
 
-  // Set up some the default parameters
-  // this array represents the labels which will be displayed
-  // and the first column in the vtkQtTreeView
+  // Set up some the default label parameters
   this->LabeledDataMapper->SetFieldDataName("name");
   this->LabeledDataMapper->SetLabelModeToLabelFieldData();
   this->LabeledDataMapper->GetLabelTextProperty()->SetColor(0,0,0);
   this->LabeledDataMapper->GetLabelTextProperty()->SetJustificationToCentered();
   this->LabeledDataMapper->GetLabelTextProperty()->SetFontSize(14);
-  this->LabeledDataMapper->SetLabelFormat("%s");
 
   this->ConeSource->SetRadius(0.01);
   this->ConeSource->SetHeight(0.01);
@@ -176,7 +173,6 @@ int vtkLineageView::GetFontSize()
 //----------------------------------------------------------------------------
 void vtkLineageView::SetLabelFieldName(const char *field)
 {
-  // Set the field name
   this->LabeledDataMapper->SetFieldDataName(field);
 }
 //----------------------------------------------------------------------------

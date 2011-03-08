@@ -327,12 +327,12 @@ void CellLineage::slotOpenLineageData()
     {
     const char* name =
         LineageReader->GetOutput()->GetVertexData()->GetArrayName(i);
+    this->ui->labelType->addItem(name);
     // if data array (i.e. numbers), add it
     if(LineageReader->GetOutput()->GetVertexData()->GetArray(name))
       {
       this->ui->scaleType->addItem(name);
       this->ui->colorCodeType->addItem(name);
-      this->ui->labelType->addItem(name);
       }
     }
 
@@ -408,7 +408,7 @@ void CellLineage::slotChangeColorCode(QString array)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeLabel(QString array)
 {
-  //this->LineageView->SetLabelFieldName(array.toLocal8Bit().data());
+  this->LineageView->SetLabelFieldName(array.toLocal8Bit().data());
 
   //update visu
   this->LineageView->Render();
