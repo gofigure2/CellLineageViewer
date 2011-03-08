@@ -32,7 +32,6 @@
 #include "vtkDelaunay2D.h"
 #include "vtkContourFilter.h"
 #include "vtkSplineFilter.h"
-#include "vtkCornerAnnotation.h"
 #include "vtkGraphLayout.h"
 #include "vtkGraphLayoutStrategy.h"
 #include "vtkElbowGraphToPolyData.h"
@@ -50,7 +49,6 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkSelectionNode.h"
 #include "vtkSmartPointer.h"
-#include "vtkSphereSource.h"
 #include "vtkTextProperty.h"
 #include "vtkAlgorithmOutput.h"
 #include "vtkTreeCollapseFilter.h"
@@ -73,8 +71,6 @@ vtkLineageView::vtkLineageView()
   this->MakePlane             = vtkSmartPointer<vtkDelaunay2D>::New();
   this->IsoContour            = vtkSmartPointer<vtkContourFilter>::New();
   this->SmoothContour         = vtkSmartPointer<vtkSplineFilter>::New();
-  this->CornerAnnotation      = vtkSmartPointer<vtkCornerAnnotation>::New();
-  this->TreeToPolyData        = vtkSmartPointer<vtkElbowGraphToPolyData>::New();
   this->CollapseToPolyData    = vtkSmartPointer<vtkElbowGraphToPolyData>::New();
   this->IsoLineMapper         = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->PlaneMapper           = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -85,7 +81,6 @@ vtkLineageView::vtkLineageView()
   this->GlyphActor            = vtkSmartPointer<vtkActor>::New();
   this->CollapseActor         = vtkSmartPointer<vtkActor>::New();
   this->LabelActor            = vtkSmartPointer<vtkActor2D>::New();
-  this->SphereSource          = vtkSmartPointer<vtkSphereSource>::New();
   this->ConeSource            = vtkSmartPointer<vtkConeSource>::New();
   this->VertexGlyphs          = vtkSmartPointer<vtkVertexGlyphFilter>::New();
   this->ColorLUT              = vtkSmartPointer<vtkLookupTable>::New();
@@ -104,7 +99,6 @@ vtkLineageView::vtkLineageView()
   this->TreeVertexToEdge      = vtkSmartPointer<vtkTreeVertexToEdgeSelection>::New();
   this->CollapsedThreshold    = vtkSmartPointer<vtkThresholdPoints>::New();
   this->EdgeWeightField       = 0;
-  // why?
   this->CurrentTime           = 0.0;
 
   this->BlockUpdate = 0;
@@ -126,21 +120,25 @@ vtkLineageView::vtkLineageView()
   this->LabeledDataMapper->GetLabelTextProperty()->SetJustificationToCentered();
   this->LabeledDataMapper->GetLabelTextProperty()->SetFontSize(14);
   this->LabeledDataMapper->SetLabelFormat("%s");
-  this->SphereSource->SetRadius(0.025); // Why? Given the current layout strategies
-                                       // seems to work pretty good just hardcoding
-  this->SphereSource->SetPhiResolution(6);
-  this->SphereSource->SetThetaResolution(6);
+
   this->ConeSource->SetRadius(0.01);
   this->ConeSource->SetHeight(0.01);
   this->ConeSource->SetDirection(0, 1, 0);
+
   this->CollapsedNodes->ScalingOff();
+
   this->TreeLayoutStrategy->SetAngle(360);
   this->TreeLayoutStrategy->SetRadial(true);
   this->TreeLayoutStrategy->SetLogSpacingValue(1);
+
   this->TreeLayout->SetLayoutStrategy(this->TreeLayoutStrategy);
+
   this->IsoContour->SetValue(0, this->CurrentTime);
+
   this->IsoActor->GetProperty()->SetLineWidth(5);
+
   this->SmoothContour->SetSubdivideToLength();
+
   this->SmoothContour->SetLength(.01);
 
   // Okay setup the internal pipeline
@@ -336,7 +334,8 @@ void vtkLineageView::SetupPipeline()
   this->CollapsedGlyphMapper->SetInputConnection(this->CollapsedNodes->GetOutputPort());
 
   // Set up mapper parameters
-  // For the color Coding
+  this->SelectionMapper->SetScalarVisibility(false);
+  // Set up mapper which requiere LUT
   UpdateMappersForColorCoding(NULL, 0, 0, false);
 
   // Set mappers to actors
@@ -368,7 +367,6 @@ void vtkLineageView::UpdateMappersForColorCoding(const char* iArray,
   this->GlyphMapper->SetScalarRange( iMinValue, iMaxValue);
   this->IsoLineMapper->SetLookupTable(ColorLUT);
   this->IsoLineMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->SelectionMapper->SetScalarVisibility(iScalarVisibility);
   this->CollapseMapper->SetLookupTable(ColorLUT);
   this->CollapseMapper->SetScalarRange( iMinValue, iMaxValue);
   this->CollapsedGlyphMapper->SetScalarVisibility(iScalarVisibility);
@@ -575,6 +573,7 @@ void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
            it != itEnd; ++it)
         {
         collapsedNew->InsertNextValue(*it);
+        std::cout << "Nodes to be collapsed: " << *it << std::endl;
         }
       this->TreeCollapse->SetCollapsedNodes(collapsedNew);
       collapsedNew->Delete();

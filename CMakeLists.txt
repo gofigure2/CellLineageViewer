@@ -79,6 +79,3 @@ target_link_libraries( CellLineage
   vtkVolumeRendering
 )
 
-add_executable( TableToAdjacencyList MACOSX_BUNDLE TableToAdjacencyList.cxx )
-target_link_libraries( TableToAdjacencyList vtkInfovis )
-

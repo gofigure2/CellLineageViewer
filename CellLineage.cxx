@@ -353,10 +353,13 @@ void CellLineage::slotOpenLineageData()
 
   // set the active scalar, update mappers and LUTs
   char* activeScalar = this->ui->colorCodeType->currentText().toLocal8Bit().data();
-  LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(activeScalar);
+  // change active scalar
+  /*LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(activeScalar);
+  // update the lookup tables
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(activeScalar)->GetRange();
-  this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1], false);
+  this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1], false);*/
+  this->LineageView->SetEdgeColorFieldName(activeScalar);
 }
 //----------------------------------------------------------------------------
 
@@ -387,7 +390,7 @@ void CellLineage::slotChangeScale(QString array)
 //----------------------------------------------------------------------------
 void CellLineage::slotEnableColorCode(int state)
 {
-  // color
+  // update visibility
   this->LineageView->SetEdgeScalarVisibility(state);
 
   //update visu
@@ -398,18 +401,14 @@ void CellLineage::slotEnableColorCode(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeColorCode(QString array)
 {
-  // color
+/*  // change active scalar
   LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(array.toLocal8Bit().data());
+  // update LUT
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
   this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1], true);
-
-  // scale
-  // update distance array name for the colors
-  //this->LineageView->SetDistanceArrayName(NULL);
-  this->LineageView->SetDistanceArrayName(array.toLocal8Bit().data());
-  // re-scale the tree properly
-  this->slotEnableScale( this->ui->scaleBy->isChecked() );
+*/
+  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
 
   //update visu
   this->LineageView->Render();
@@ -419,20 +418,8 @@ void CellLineage::slotChangeColorCode(QString array)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeLabel(QString array)
 {
-	/*
-  // color
-  LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(array.toLocal8Bit().data());
-  double* range =
-      LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
-  this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1], true);
+  //this->LineageView->SetLabelFieldName(array.toLocal8Bit().data());
 
-  // scale
-  // update distance array name for the colors
-  //this->LineageView->SetDistanceArrayName(NULL);
-  this->LineageView->SetDistanceArrayName(array.toLocal8Bit().data());
-  // re-scale the tree properly
-  this->slotEnableScale( this->ui->scaleBy->isChecked() );
-*/
   //update visu
   this->LineageView->Render();
 }
