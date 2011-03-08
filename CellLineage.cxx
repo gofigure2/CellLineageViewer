@@ -38,11 +38,10 @@
 #include <vtkQtTreeModelAdapter.h>
 #include <vtkVariant.h>
 #include <vtkViewTheme.h>
-#include <vtkVolumeViewer.h>
-#include <vtkXMLImageDataReader.h>
 
 #include <vector>
 
+//----------------------------------------------------------------------------
 class CellLineageUpdater : public vtkCommand
 {
 public:
@@ -71,7 +70,9 @@ private:
   ~CellLineageUpdater() { }
   std::vector<vtkView*> Views;
 };
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Constructor
 CellLineage::
 CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
@@ -82,8 +83,6 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
 
   this->LineageReader       = vtkTreeReader::New();
   this->LineageView         = vtkLineageView::New();
-  this->VolumeReader        = vtkXMLImageDataReader::New();
-  this->VolumeView          = vtkVolumeViewer::New();
   this->QtTreeView          = vtkQtTreeView::New();
   this->AnnotationLink      = vtkAnnotationLink::New();
   this->Updater             = CellLineageUpdater::New();
@@ -99,15 +98,9 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
 
   this->ui->treeTextView->layout()->addWidget(this->QtTreeView->GetWidget());
 
-  this->GeneTable = 0;
-  this->GeneGraph = 0;
-
   // Lineage Viewer needs to get my render window
   this->LineageView->SetInteractor(this->ui->vtkLineageViewWidget->GetInteractor());
   this->ui->vtkLineageViewWidget->SetRenderWindow(this->LineageView->GetRenderWindow());
-
-  // Volume Viewer needs to get my render window
-  this->VolumeView->SetRenderWindow(this->ui->vtkVolumeViewWidget->GetRenderWindow());
 
   // Lineage view parameters
   connect(this->ui->collapseModeCheckBox, SIGNAL(stateChanged(int)),
@@ -148,46 +141,26 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
     this, SLOT(slotSetGlobalTimeValue(int)));
   connect(this->ui->timeSlider, SIGNAL(sliderMoved(int)),
     this, SLOT(slotGlobalTimeValueChanging(int)));
-  connect(this->ui->vcr, SIGNAL(play()), this, SLOT(slotVCRPlay()));
-  connect(this->ui->vcr, SIGNAL(pause()), this, SLOT(slotVCRPause()));
-  connect(this->ui->vcr, SIGNAL(back()), this, SLOT(slotVCRBack()));
-  connect(this->ui->vcr, SIGNAL(forward()), this, SLOT(slotVCRForward()));
-  connect(this->ui->vcr, SIGNAL(first()), this, SLOT(slotVCRFirst()));
-  connect(this->ui->vcr, SIGNAL(last()), this, SLOT(slotVCRLast()));
 
   // Application signals and slots
   connect(this->ui->actionOpenLineageFile, SIGNAL(triggered()), this, SLOT(slotOpenLineageData()));
-  connect(this->ui->actionOpenGeneData, SIGNAL(triggered()), this, SLOT(slotOpenGeneData()));
-  connect(this->ui->actionOpenDataFile, SIGNAL(triggered()), this, SLOT(slotOpenVolumeData()));
   connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(slotExit()));
-
-  this->SelectingGenesFromCells = false;
-  this->SelectingCellsFromGenes = false;
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 CellLineage::~CellLineage()
 {
   this->LineageReader->Delete();
   this->LineageView->Delete();
-  this->VolumeReader->Delete();
-  this->VolumeView->Delete();
   this->QtTreeView->Delete();
   this->AnnotationLink->Delete();
   this->Updater->Delete();
   this->Connect->Delete();
-
-  if (this->GeneTable != NULL)
-    {
-    this->GeneTable->Delete();
-    this->GeneTable = NULL;
-    }
-  if (this->GeneGraph != NULL)
-    {
-    this->GeneGraph->Delete();
-    this->GeneGraph = NULL;
-    }
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set the global time value for all views
 void CellLineage::slotGlobalTimeValueChanging(int value)
@@ -201,7 +174,9 @@ void CellLineage::slotGlobalTimeValueChanging(int value)
   this->LineageView->SetCurrentTime(value);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set the global time value for all views
 void CellLineage::slotSetGlobalTimeValue(int value)
@@ -211,14 +186,8 @@ void CellLineage::slotSetGlobalTimeValue(int value)
   // Put mouse into busy mode
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-  // Read in volume data
-  this->readVolumeDataTimeStep(this->globalTime);
-
   // Set the value of the slider and line edit.
   this->ui->timeSlider->setValue(value);
-
-  // Have the volume view update itself
-  this->VolumeView->UpdateView();
 
   // Have the lineage view update itself
   this->LineageView->SetCurrentTime(value);
@@ -227,40 +196,9 @@ void CellLineage::slotSetGlobalTimeValue(int value)
   // Have default cursor come back
   QApplication::restoreOverrideCursor();
 }
+//----------------------------------------------------------------------------
 
-// Description:
-// VCR Slots
-void CellLineage::slotVCRPlay()
-{
-  this->globalTime++;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRPause()
-{
-  this->globalTime;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRBack()
-{
-  this->globalTime--;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRForward()
-{
-  this->globalTime++;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRFirst()
-{
-  this->globalTime = 1;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-void CellLineage::slotVCRLast()
-{
-  this->globalTime = 99;
-  slotSetGlobalTimeValue(this->globalTime);
-}
-
+//----------------------------------------------------------------------------
 // Description:
 // Set mouse mode
 void CellLineage::slotSetCollapseMode(int on)
@@ -275,7 +213,9 @@ void CellLineage::slotSetCollapseMode(int on)
     }
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set labels on/off
 void CellLineage::slotSetLabels(int on)
@@ -290,7 +230,9 @@ void CellLineage::slotSetLabels(int on)
     }
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set whether to use radial layout.
 void CellLineage::slotSetRadialLayout(int radial)
@@ -314,7 +256,9 @@ void CellLineage::slotSetRadialLayout(int radial)
   this->LineageView->SetRadialLayout(radial);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set the radial layout angle.
 void CellLineage::slotSetRadialAngle(int angle)
@@ -322,7 +266,9 @@ void CellLineage::slotSetRadialAngle(int angle)
   this->LineageView->SetRadialAngle(angle);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set the log spacing for the layout.
 void CellLineage::slotSetLogSpacingFactor(double spacing)
@@ -330,7 +276,9 @@ void CellLineage::slotSetLogSpacingFactor(double spacing)
   this->LineageView->SetLogSpacingFactor(spacing);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Description:
 // Set whether to set the back plane
 void CellLineage::slotSetBackPlane(int state)
@@ -338,8 +286,9 @@ void CellLineage::slotSetBackPlane(int state)
   this->LineageView->SetBackPlane(state);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
-
+//----------------------------------------------------------------------------
 // Description:
 // Set whether to set the iso contour
 void CellLineage::slotSetIsoContour(int state)
@@ -347,212 +296,9 @@ void CellLineage::slotSetIsoContour(int state)
   this->LineageView->SetIsoContour(state);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
-// Action to be taken upon gene expression file open
-void CellLineage::slotOpenGeneData()
-{
-  QString fileName = QFileDialog::getOpenFileName(
-    this,
-    "Select the gene expression data file",
-    QDir::homePath(),
-    "Comma Separated Values Files (*.csv);;All Files (*.*)");
-
-  if (fileName.isNull())
-    {
-    return;
-    }
-
-  // Read in the gene table
-  vtkDelimitedTextReader* reader = vtkDelimitedTextReader::New();
-  reader->SetFileName(fileName.toStdString().c_str());
-  reader->SetMergeConsecutiveDelimiters(false);
-  reader->SetHaveHeaders(true);
-  reader->Update();
-  this->GeneTable = reader->GetOutput();
-  this->GeneTable->Register(0);
-  reader->Delete();
-
-  // Make a graph of the gene table
-  vtkTableToGraph* tableToGraph = vtkTableToGraph::New();
-  tableToGraph->SetInput(this->GeneTable);
-  tableToGraph->AddLinkVertex("cell", "cell");
-  tableToGraph->AddLinkVertex("gene", "gene");
-  tableToGraph->AddLinkEdge("cell", "gene");
-  tableToGraph->Update();
-  this->GeneGraph = tableToGraph->GetOutput();
-  this->GeneGraph->Register(0);
-  tableToGraph->Delete();
-
-  // Make mapping from table ids to graph vertices and back.
-  // Make mapping from tree ids to graph vertices and back.
-  vtkStringArray* domainCol = vtkStringArray::SafeDownCast(
-    this->GeneGraph->GetVertexData()->GetAbstractArray("domain"));
-  vtkStringArray* valueCol = vtkStringArray::SafeDownCast(
-    this->GeneGraph->GetVertexData()->GetAbstractArray("label"));
-  for (vtkIdType v = 0; v < this->GeneGraph->GetNumberOfVertices(); v++)
-    {
-    vtkStdString d = domainCol->GetValue(v);
-    vtkStdString val = valueCol->GetValue(v);
-    if (d == "cell")
-      {
-      this->CellToVertex[val] = v;
-      }
-    else
-      {
-      this->GeneToVertex[val] = v;
-      }
-    }
-
-  // Make a list of gene names
-  // Make GeneToTableRow map
-  std::map<vtkStdString, vtkIdType>::iterator it, itEnd;
-  it = this->GeneToVertex.begin();
-  itEnd = this->GeneToVertex.end();
-  QList<QStandardItem*> genes;
-  for (vtkIdType r = 0; it != itEnd; ++it, ++r)
-    {
-    this->GeneToTableRow[it->first] = r;
-    genes.append(new QStandardItem(QString(it->first.c_str())));
-    }
-  QStandardItemModel* model = new QStandardItemModel;
-  model->appendColumn(genes);
-  model->setHeaderData(0, Qt::Horizontal, QVariant("Gene"));
-  this->ui->geneTableView->setModel(model);
-
-  // Make CellToTreePedigree map
-  vtkTree* tree = vtkTree::SafeDownCast(
-    this->QtTreeView->GetRepresentation()->GetInputConnection()->
-      GetProducer()->GetOutputDataObject(0));
-  vtkStringArray* nameArr = vtkStringArray::SafeDownCast(
-    tree->GetVertexData()->GetAbstractArray("name"));
-  for (vtkIdType i = 0; i < nameArr->GetNumberOfTuples(); ++i)
-    {
-    this->CellToTreePedigree[nameArr->GetValue(i)] = i;
-    }
-
-  // Connect signals to slots
-  connect(
-    this->ui->geneTableView->selectionModel(),
-    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-    this, SLOT(slotGeneSelectionChanged()));
-  this->Connect->Connect(
-    this->QtTreeView->GetRepresentation(), vtkCommand::SelectionChangedEvent,
-    this, SLOT(slotSelectGenesFromCells(vtkObject*, unsigned long, void*, void*)));
-  this->Connect->Connect(
-    this->LineageView->GetRepresentation(), vtkCommand::SelectionChangedEvent,
-    this, SLOT(slotSelectGenesFromCells(vtkObject*, unsigned long, void*, void*)));
-}
-
-void CellLineage::slotGeneSelectionChanged()
-{
-  if (!this->SelectingGenesFromCells)
-    {
-    // Convert the gene selection into a cell selection.
-    QItemSelection cellSelection;
-    QModelIndexList geneList = this->ui->geneTableView->selectionModel()->selectedRows();
-    //vtkTreeToQtModelAdapter* model = qobject_cast<vtkTreeToQtModelAdapter*>(this->ui->treeTextView->model());
-
-    vtkSmartPointer<vtkSelection> selection =
-      vtkSmartPointer<vtkSelection>::New();
-    vtkSmartPointer<vtkSelectionNode> selectionNode =
-      vtkSmartPointer<vtkSelectionNode>::New();
-    vtkSmartPointer<vtkStringArray> selectionArr =
-      vtkSmartPointer<vtkStringArray>::New();
-    selectionArr->SetName("name");
-    selectionNode->SetSelectionList(selectionArr);
-    selectionNode->SetContentType(vtkSelectionNode::VALUES);
-    selectionNode->SetFieldType(vtkSelectionNode::VERTEX);
-    selection->AddNode(selectionNode);
-
-    vtkStringArray* valueArray = vtkStringArray::SafeDownCast(
-      this->GeneGraph->GetVertexData()->GetAbstractArray("label"));
-    vtkSmartPointer<vtkOutEdgeIterator> it =
-      vtkSmartPointer<vtkOutEdgeIterator>::New();
-    QAbstractItemModel* tableModel = this->ui->geneTableView->model();
-    for (int g = 0; g < geneList.size(); g++)
-      {
-      QString gene = tableModel->data(geneList[g]).toString();
-      vtkIdType geneVertex = this->GeneToVertex[gene.toStdString()];
-
-      // Get adjacent graph edges
-      this->GeneGraph->GetOutEdges(geneVertex, it);
-      while (it->HasNext())
-        {
-        vtkOutEdgeType e = it->Next();
-        vtkIdType cellVertex = e.Target;
-        vtkStdString cellName = valueArray->GetValue(cellVertex);
-        vtkIdType pedigree = this->CellToTreePedigree[cellName];
-        selectionArr->InsertNextValue(cellName);
-        //cerr << "selecting cell (" << cellVertex << "," << cellName << "," << pedigree << ") from gene: (" << gene.toStdString() << "," << geneVertex << ")" << endl;
-        //QModelIndex cellIndex = model->PedigreeToQModelIndex(pedigree);
-        //cellSelection.select(cellIndex, cellIndex);
-        }
-      }
-    //this->SelectingCellsFromGenes = true;
-    vtkSmartPointer<vtkSelection> converted;
-    converted.TakeReference(vtkConvertSelection::ToIndexSelection(selection, this->LineageReader->GetOutput()));
-    this->AnnotationLink->SetCurrentSelection(converted);
-    this->QtTreeView->Update();
-    this->LineageView->Render();
-    //this->ui->treeTextView->selectionModel()->select(cellSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-    //this->SelectingCellsFromGenes = false;
-    }
-}
-
-void CellLineage::slotSelectGenesFromCells(vtkObject*, unsigned long, void*, void* callData)
-{
-  vtkSelection* selection = reinterpret_cast<vtkSelection*>(callData);
-  vtkSelectionNode* node = 0;
-  vtkIdTypeArray* arr = 0;
-  if (selection)
-    {
-    node = selection->GetNode(0);
-    }
-  if (node)
-    {
-    arr = vtkIdTypeArray::SafeDownCast(node->GetSelectionList());
-    }
-  if (!this->SelectingCellsFromGenes && arr)
-    {
-    QAbstractItemModel* tableModel = this->ui->geneTableView->model();
-    QItemSelection geneSelection;
-    vtkStringArray* valueArray = vtkStringArray::SafeDownCast(
-      this->GeneGraph->GetVertexData()->GetAbstractArray("label"));
-    vtkSmartPointer<vtkOutEdgeIterator> it =
-      vtkSmartPointer<vtkOutEdgeIterator>::New();
-    vtkTree* tree = vtkTree::SafeDownCast(
-      this->QtTreeView->GetRepresentation()->GetInputConnection()->
-        GetProducer()->GetOutputDataObject(0));
-    vtkStringArray* nameArray = vtkStringArray::SafeDownCast(
-      tree->GetVertexData()->GetAbstractArray("name"));
-    for (vtkIdType i = 0; i < arr->GetNumberOfTuples(); i++)
-      {
-      if (arr->GetValue(i) >= nameArray->GetNumberOfTuples())
-        {
-        continue;
-        }
-
-      vtkStdString cell = nameArray->GetValue(arr->GetValue(i));
-      vtkIdType cellVertex = this->CellToVertex[cell];
-
-      // Get adjacent graph edges
-      this->GeneGraph->GetOutEdges(cellVertex, it);
-      while (it->HasNext())
-        {
-        vtkOutEdgeType e = it->Next();
-        vtkIdType geneVertex = e.Target;
-        vtkStdString geneName = valueArray->GetValue(geneVertex);
-        vtkIdType row = this->GeneToTableRow[geneName];
-        QModelIndex geneIndex = tableModel->index(row, 0);
-        geneSelection.select(geneIndex, geneIndex);
-        }
-      }
-    this->SelectingGenesFromCells = true;
-    this->ui->geneTableView->selectionModel()->select(geneSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
-    this->SelectingGenesFromCells = false;
-    }
-}
-
+//----------------------------------------------------------------------------
 // Action to be taken upon lineage file open
 void CellLineage::slotOpenLineageData()
 {
@@ -656,8 +402,9 @@ void CellLineage::slotChangeColorCode(QString array)
       LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
   this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1], true);
 
-  //scale
+  // scale
   // update distance array name for the colors
+  //this->LineageView->SetDistanceArrayName(NULL);
   this->LineageView->SetDistanceArrayName(array.toLocal8Bit().data());
   // re-scale the tree properly
   this->slotEnableScale( this->ui->scaleBy->isChecked() );
@@ -673,18 +420,24 @@ void CellLineage::slotSetElbow(int state)
   this->LineageView->SetElbow(state?1:0);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void CellLineage::slotSetElbowAngle(int value)
 {
   this->LineageView->SetElbowAngle(static_cast<double>(value)/100.0);
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void CellLineage::slotSelectionChanged()
 {
   this->LineageView->Render();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Set up the lineage list view of the data
 void CellLineage::setUpLineageListView()
 {
@@ -694,7 +447,9 @@ void CellLineage::setUpLineageListView()
   // Now resize the first column to fit it's contents
   this->QtTreeView->ResizeColumnToContents(0);
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 // Browse for and read in the lineage data
 int CellLineage::readLineageData()
 {
@@ -717,64 +472,9 @@ int CellLineage::readLineageData()
   this->LineageReader->Update();
   return 0;
 }
+//----------------------------------------------------------------------------
 
-// Action to be taken upon volume file open
-void CellLineage::slotOpenVolumeData()
-{
-  // Browse for and read the lineage data
-  if (this->readVolumeData())
-    {
-    return;
-    }
-
-  // Set up the volume view of this data
-  this->VolumeView->SetInputConnection(this->VolumeReader->GetOutputPort(0));
-}
-
-// Browse for and read in the volume data
-int CellLineage::readVolumeData()
-{
-
-  // Open the lineage data file
-  QString fileName = QFileDialog::getOpenFileName(
-    this,
-    "Select the first volume time series file",
-    QDir::homePath(),
-    "Volume Data (*.vti);;All Files (*.*)");
-
-  if (fileName.isNull())
-    {
-    return -1;
-    }
-
-  // Grab the data directory for the volume data
-  QFileInfo info(fileName);
-  this->volumeDataDir = info.path();
-
-  // Create volume reader
-  this->VolumeReader->SetFileName( fileName.toAscii() );
-  this->VolumeReader->Update();
-  return 0;
-}
-
-// Description: Open a specific timestep (do not browse)
-int CellLineage::readVolumeDataTimeStep(int timeStep)
-{
-  int volumeTime = (timeStep - 37)/3;
-  if (volumeTime < 0) volumeTime = 0;
-
-  // Hack alert this method makes lots of hardcode assumptions
-  QString file_pattern;
-  file_pattern.sprintf("%s/cache%d.vti", this->volumeDataDir.toAscii().data(), volumeTime);
-
-  // Read in this particular file (time step)
-  this->VolumeReader->SetFileName( file_pattern.toAscii() );
-  this->VolumeReader->Update();
-
-  // Success I guess
-  return 0;
-}
-
+//----------------------------------------------------------------------------
 void CellLineage::slotExit() {
   qApp->exit();
 }

@@ -30,15 +30,13 @@ set(Srcs
   main.cxx
   CellLineage.cxx
   QSliderLineEdit.cxx
-  QVCRWidget.cxx
   vtkLineageView.cxx
   vtkTreeCollapseFilter.cxx
   vtkTreeVertexToEdgeSelection.cxx
   vtkElbowGraphToPolyData.cxx
-  vtkVolumeViewer.cxx
   )
-set(UIs CellLineage.ui QVCRWidget.ui)
-set(Headers CellLineage.h QSliderLineEdit.h QtSNLCommon.h QVCRWidget.h)
+set(UIs CellLineage.ui)
+set(Headers CellLineage.h QSliderLineEdit.h QtSNLCommon.h )
 set(Resources Icons/FamFamFamIcons.qrc)
 
 # The rest should just work (sure...)

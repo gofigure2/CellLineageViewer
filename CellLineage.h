@@ -29,8 +29,6 @@ class vtkGraph;
 class vtkLineageView;
 class vtkTable;
 class vtkTreeReader;
-class vtkVolumeViewer;
-class vtkXMLImageDataReader;
 
 // The view updater
 class CellLineageUpdater;
@@ -49,8 +47,6 @@ public slots:
 
   // Application slots
   virtual void slotOpenLineageData();
-  virtual void slotOpenGeneData();
-  virtual void slotOpenVolumeData();
   virtual void slotExit();
 
   // Description:
@@ -111,35 +107,12 @@ protected slots:
   // Called when selection changed in the Qt tree view
   void slotSelectionChanged();
 
-  // Description:
-  // The gene selection changed
-  void slotGeneSelectionChanged();
-
-  // Description:
-  // Select genes expressed in cells
-  void slotSelectGenesFromCells(vtkObject*, unsigned long, void*, void*);
-
-  // Description:
-  // VCR slots
-  void slotVCRPlay();
-  void slotVCRPause();
-  void slotVCRBack();
-  void slotVCRForward();
-  void slotVCRFirst();
-  void slotVCRLast();
-
 private:
 
   // Methods
 
   // Description: Browse for and read the Lineage data
   int readLineageData();
-
-  // Description: Browse for and read the volume data
-  int readVolumeData();
-
-  // Description: Open a specific timestep (do not browse)
-  int readVolumeDataTimeStep(int timeStep);
 
   // Description: Set up the Lineage list view of the data
   void setUpLineageListView();
@@ -148,16 +121,10 @@ private:
   vtkTreeReader*           LineageReader;
   vtkLineageView*          LineageView;
   vtkDataRepresentation*   LineageViewRep;
-  vtkXMLImageDataReader*   VolumeReader;
-  vtkVolumeViewer*         VolumeView;
   vtkQtTreeView*           QtTreeView;
   vtkDataRepresentation*   QtTreeViewRep;
   vtkAnnotationLink*       AnnotationLink;
   QString volumeDataDir;
-  vtkTable* GeneTable;
-  vtkGraph* GeneGraph;
-  bool SelectingGenesFromCells;
-  bool SelectingCellsFromGenes;
   CellLineageUpdater* Updater;
   vtkEventQtSlotConnect* Connect;
 
