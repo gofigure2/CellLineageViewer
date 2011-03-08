@@ -124,17 +124,12 @@ private:
   vtkLineageView*          LineageView;
   vtkDataRepresentation*   LineageViewRep;
   vtkQtTreeView*           QtTreeView;
-  vtkDataRepresentation*   QtTreeViewRep;
   vtkAnnotationLink*       AnnotationLink;
   CellLineageUpdater* Updater;
   vtkEventQtSlotConnect* Connect;
 
   // Designer form
   Ui_CellLineage *ui;
-
-  // Global time ivar
-  int globalTime;
-
 };
 
 #endif // CellLineage_H

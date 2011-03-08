@@ -57,7 +57,6 @@ class vtkDataSetMapper;
 class vtkGeometryFilter;
 class vtkDynamic2DLabelMapper;
 class vtkCellCenters;
-class vtkTreeCollapseFilter;
 class vtkTreeVertexToEdgeSelection;
 class vtkThresholdPoints;
 class vtkVertexGlyphFilter;
@@ -69,9 +68,6 @@ public:
   vtkTypeRevisionMacro(vtkLineageView, vtkRenderView);
   void PrintSelf(ostream& os, vtkIndent indent);
   
-  void UpdateMappersForColorCoding(const char* iArray,
-      int iMinValue, int iMaxValue, bool iScalarVisibility);
-
   // Description:
   // The name of the vertex field used for coloring the vertices
   virtual void SetVertexColorFieldName(const char *field);
@@ -216,7 +212,6 @@ protected:
   vtkSmartPointer<vtkActor>                         SelectionActor;
   vtkSmartPointer<vtkRenderedAreaPicker>            Picker;
   vtkSmartPointer<vtkCellCenters>                   CellCenters;
-  vtkSmartPointer<vtkTreeCollapseFilter>            TreeCollapse;
   vtkSmartPointer<vtkTreeVertexToEdgeSelection>     TreeVertexToEdge;
   vtkSmartPointer<vtkGlyph3D>                       CollapsedNodes;
   vtkSmartPointer<vtkPolyDataMapper>                CollapsedGlyphMapper;

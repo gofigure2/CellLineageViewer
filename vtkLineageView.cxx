@@ -51,7 +51,6 @@
 #include "vtkSmartPointer.h"
 #include "vtkTextProperty.h"
 #include "vtkAlgorithmOutput.h"
-#include "vtkTreeCollapseFilter.h"
 #include "vtkConeSource.h"
 #include "vtkThresholdPoints.h"
 #include "vtkVertexGlyphFilter.h"
@@ -92,7 +91,6 @@ vtkLineageView::vtkLineageView()
   this->SelectionActor        = vtkSmartPointer<vtkActor>::New();
   this->Picker                = vtkSmartPointer<vtkRenderedAreaPicker>::New();
   this->CellCenters           = vtkSmartPointer<vtkCellCenters>::New();
-  this->TreeCollapse          = vtkSmartPointer<vtkTreeCollapseFilter>::New();
   this->CollapsedNodes        = vtkSmartPointer<vtkGlyph3D>::New();
   this->CollapsedGlyphMapper  = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->CollapsedGlyphActor   = vtkSmartPointer<vtkActor>::New();
@@ -134,16 +132,15 @@ vtkLineageView::vtkLineageView()
   this->TreeLayout->SetLayoutStrategy(this->TreeLayoutStrategy);
 
   this->IsoContour->SetValue(0, this->CurrentTime);
-
   this->IsoActor->GetProperty()->SetLineWidth(5);
 
   this->SmoothContour->SetSubdivideToLength();
-
   this->SmoothContour->SetLength(.01);
 
   // Okay setup the internal pipeline
   this->SetupPipeline();
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 vtkLineageView::~vtkLineageView()
@@ -151,55 +148,70 @@ vtkLineageView::~vtkLineageView()
   this->SetEdgeWeightField(0);
 
   this->EventForwarder->Delete();
-
-  // Smart pointers will handle the rest of
-  // vtk pipeline objects :)
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetCurrentTime(double time_value)
 {
   this->CurrentTime = time_value;
   this->IsoContour->SetValue(0, this->CurrentTime);
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetFontSize(const int size)
 {
   this->LabeledDataMapper->GetLabelTextProperty()->SetFontSize(size);
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 int vtkLineageView::GetFontSize()
 {
   return this->LabeledDataMapper->GetLabelTextProperty()->GetFontSize();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetLabelFieldName(const char *field)
 {
   // Set the field name
   this->LabeledDataMapper->SetFieldDataName(field);
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 char* vtkLineageView::GetLabelFieldName()
 {
   return this->LabeledDataMapper->GetFieldDataName();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetLabelsOn()
 {
   this->LabelActor->VisibilityOn();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetLabelsOff()
 {
   this->LabelActor->VisibilityOff();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetRadialLayout(bool radial)
 {
   this->Radial = radial;
   this->TreeLayoutStrategy->SetRadial(this->Radial);
   this->Renderer->ResetCamera();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetBackPlane(bool state)
 {
   if (state)
@@ -211,7 +223,9 @@ void vtkLineageView::SetBackPlane(bool state)
     this->PlaneActor->VisibilityOff();
     }
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetIsoContour(bool state)
 {
   if (state)
@@ -223,6 +237,7 @@ void vtkLineageView::SetIsoContour(bool state)
     this->IsoActor->VisibilityOff();
     }
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void vtkLineageView::SetRadialAngle(int angle)
@@ -237,6 +252,7 @@ int vtkLineageView::GetRadialAngle()
 {
   return this->Angle;
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void vtkLineageView::SetLogSpacingFactor(float spacing)
@@ -245,6 +261,7 @@ void vtkLineageView::SetLogSpacingFactor(float spacing)
   this->TreeLayoutStrategy->SetLogSpacingValue(this->LogSpacing);
   this->Renderer->ResetCamera();
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void vtkLineageView::SetupPipeline()
@@ -269,14 +286,6 @@ void vtkLineageView::SetupPipeline()
   this->SelectionActor->PickableOff();
   this->CollapseActor->PickableOn();
   this->PlaneActor->VisibilityOff();
-
-  // Collapse certain vertices in the tree
-  vtkIdTypeArray* ids = vtkIdTypeArray::New();
-  this->TreeCollapse->SetCollapsedNodes(ids);
-  ids->Delete();
-
-  // Lay out the tree
-  //this->TreeLayout->SetInputConnection(0, this->TreeCollapse->GetOutputPort(0));
 
   // Convert the laid out tree to poly data
   this->CollapseToPolyData->SetInputConnection(0, this->TreeLayout->GetOutputPort(0));
@@ -318,7 +327,6 @@ void vtkLineageView::SetupPipeline()
   this->TreeVertexToEdge->SetInput(0, selection);
 
   // Set up selection
-  //this->TreeVertexToEdge->SetInputConnection(1, this->TreeCollapse->GetOutputPort(0));
   this->TreeVertexToEdge->SetInputConnection(1, this->TreeLayout->GetOutputPort(0));
   this->ExtractSelection->SetInputConnection(0, this->CollapseToPolyData->GetOutputPort(0));
   this->ExtractSelection->SetInputConnection(1, this->TreeVertexToEdge->GetOutputPort(0));
@@ -335,8 +343,16 @@ void vtkLineageView::SetupPipeline()
 
   // Set up mapper parameters
   this->SelectionMapper->SetScalarVisibility(false);
+  this->CollapsedGlyphMapper->SetScalarVisibility(false);
   // Set up mapper which requiere LUT
-  UpdateMappersForColorCoding(NULL, 0, 0, false);
+  this->PlaneMapper->ColorByArrayComponent(0, 0);
+  this->PlaneMapper->SetScalarRange( 0, 99);
+  this->GlyphMapper->SetLookupTable(ColorLUT);
+  this->GlyphMapper->SetScalarRange( 0, 99);
+  this->IsoLineMapper->SetLookupTable(ColorLUT);
+  this->IsoLineMapper->SetScalarRange( 0, 99);
+  this->CollapseMapper->SetLookupTable(ColorLUT);
+  this->CollapseMapper->SetScalarRange( 0, 99);
 
   // Set mappers to actors
   this->IsoActor->SetMapper(this->IsoLineMapper);
@@ -357,21 +373,9 @@ void vtkLineageView::SetupPipeline()
   // Add actors to renderer
   this->Renderer->SetBackground(1.0, 1.0, 1.0);
 }
+//----------------------------------------------------------------------------
 
-void vtkLineageView::UpdateMappersForColorCoding(const char* iArray,
-    int iMinValue, int iMaxValue, bool iScalarVisibility)
-{
-  this->PlaneMapper->ColorByArrayComponent(iArray, 0);
-  this->PlaneMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->GlyphMapper->SetLookupTable(ColorLUT);
-  this->GlyphMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->IsoLineMapper->SetLookupTable(ColorLUT);
-  this->IsoLineMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->CollapseMapper->SetLookupTable(ColorLUT);
-  this->CollapseMapper->SetScalarRange( iMinValue, iMaxValue);
-  this->CollapsedGlyphMapper->SetScalarVisibility(iScalarVisibility);
-}
-
+//----------------------------------------------------------------------------
 void vtkLineageView::SetVertexColorFieldName(const char *field)
 {
   // Sanity Check
@@ -392,58 +396,79 @@ void vtkLineageView::SetVertexColorFieldName(const char *field)
     this->GlyphMapper->SetScalarRange( range[0], range[1] );
     }
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetEdgeColorFieldName(const char *field)
 {
   // Sanity Check
   if (!strcmp(field,"")) return;
   if (!strcmp(field,"No Filter")) return;
 
-  this->CollapseMapper->SetScalarModeToUseCellFieldData();
+  this->CollapseMapper->SetScalarModeToUsePointFieldData();
   this->CollapseMapper->SelectColorArray(field);
+  this->PlaneMapper->SetScalarModeToUsePointFieldData();
+  this->PlaneMapper->SelectColorArray(field);
+  this->IsoLineMapper->SetScalarModeToUsePointFieldData();
+  this->IsoLineMapper->SelectColorArray(field);
 
   // Okay now get the range of the data field
   double range[2];
   this->CollapseToPolyData->Update();
   vtkDataArray *array =
-    this->CollapseToPolyData->GetOutput()->GetCellData()->GetArray(field);
+    this->CollapseToPolyData->GetOutput()->GetPointData()->GetArray(field);
   if (array)
     {
     array->GetRange(range);
     this->CollapseMapper->SetScalarRange( range[0], range[1] );
+    this->PlaneMapper->SetScalarRange( range[0], range[1] );
+    this->IsoLineMapper->SetScalarRange( range[0], range[1] );
     }
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetEdgeScalarVisibility(bool value)
 {
   this->CollapseMapper->SetScalarVisibility(value);
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 char* vtkLineageView::GetVertexColorFieldName()
 {
   return this->GlyphMapper->GetArrayName();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 char* vtkLineageView::GetEdgeColorFieldName()
 {
   return this->CollapseMapper->GetArrayName();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetElbow(int onOff)
 {
   this->CollapseToPolyData->SetElbow(onOff);
   this->Renderer->ResetCamera();
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetElbowAngle(double value)
 {
   this->CollapseToPolyData->SetFactor(value);
 }
+//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 void vtkLineageView::SetDistanceArrayName(const char* name)
 {
   this->TreeLayoutStrategy->SetDistanceArrayName(name);
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Description:
@@ -452,15 +477,15 @@ void vtkLineageView::ApplyViewTheme(vtkViewTheme* theme)
 {
   this->Superclass::ApplyViewTheme(theme);
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Description:
 // Connects the algorithm output to the internal pipeline.
 void vtkLineageView::AddRepresentationInternal(vtkDataRepresentation* rep)
 {
-  if (this->TreeCollapse->GetNumberOfInputConnections(0) == 0)
+  if (true)
     {
-    //this->TreeCollapse->SetInputConnection(rep->GetInputConnection());
     this->TreeLayout->SetInputConnection(rep->GetInputConnection());
 
     this->Renderer->AddActor(this->IsoActor);
@@ -469,7 +494,6 @@ void vtkLineageView::AddRepresentationInternal(vtkDataRepresentation* rep)
     this->Renderer->AddActor(this->SelectionActor);
     this->Renderer->AddActor(this->PlaneActor);
     this->Renderer->AddActor(this->CollapseActor);
-    //this->Renderer->AddActor(this->CollapsedGlyphActor);
     this->Renderer->ResetCamera();
     }
   else
@@ -477,6 +501,7 @@ void vtkLineageView::AddRepresentationInternal(vtkDataRepresentation* rep)
     vtkErrorMacro("This view only supports one representation.");
     }
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Description:
@@ -484,26 +509,24 @@ void vtkLineageView::AddRepresentationInternal(vtkDataRepresentation* rep)
 void vtkLineageView::RemoveRepresentationInternal(vtkDataRepresentation* rep)
 {
   vtkAlgorithmOutput* conn = rep->GetInputConnection();
-  if (this->TreeCollapse->GetNumberOfInputConnections(0) > 0 &&
-      this->TreeCollapse->GetInputConnection(0, 0) == conn)
+  if (0)
     {
-    this->TreeCollapse->RemoveInputConnection(0, conn);
-
     this->Renderer->RemoveActor(this->IsoActor);
     this->Renderer->RemoveActor(this->GlyphActor);
     this->Renderer->RemoveActor(this->LabelActor);
     this->Renderer->RemoveActor(this->SelectionActor);
     this->Renderer->RemoveActor(this->PlaneActor);
     this->Renderer->RemoveActor(this->CollapseActor);
-    //this->Renderer->RemoveActor(this->CollapsedGlyphActor);
     }
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void vtkLineageView::SetAnnotationLink(vtkAnnotationLink* link)
 {
   this->TreeVertexToEdge->SetInputConnection(0, link->GetOutputPort(2));
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Description:
@@ -511,8 +534,8 @@ void vtkLineageView::SetAnnotationLink(vtkAnnotationLink* link)
 void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
   void* callData)
 {
-  if (caller == this->GetInteractorStyle() && eventId == vtkCommand::SelectionChangedEvent
-      /*&& this->TreeCollapse->GetNumberOfInputConnections(0) > 0*/)
+
+  if (caller == this->GetInteractorStyle() && eventId == vtkCommand::SelectionChangedEvent)
     {
     unsigned int* rect = static_cast<unsigned int*>(callData);
 
@@ -534,7 +557,7 @@ void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
     this->VisibleCellSelector->SetProcessorId(0);
     this->VisibleCellSelector->SetRenderPasses(0, 0, 0, 0, 1);
     this->VisibleCellSelector->Select();
-
+/*
     std::set<vtkIdType> collapsedSet;
     vtkIdTypeArray* collapsedOld = this->TreeCollapse->GetCollapsedNodes();
     for (vtkIdType n = 0; n < collapsedOld->GetNumberOfTuples(); n++)
@@ -599,13 +622,15 @@ void vtkLineageView::ProcessEvents(vtkObject* caller, unsigned long eventId,
       }
 
     ids->Delete();
-    selectedIds->Delete();
+    selectedIds->Delete();*/
     }
   else
     {
     Superclass::ProcessEvents(caller, eventId, callData);
     }
+
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Decsription:
@@ -621,7 +646,6 @@ void vtkLineageView::PrepareForRendering()
 
   // Make sure the input connection is up to date.
   vtkAlgorithmOutput* conn = rep->GetInputConnection();
-  //this->TreeCollapse->SetInputConnection(conn);
   this->TreeLayout->SetInputConnection(conn);
 
   // Make sure the selection link is up to date.
@@ -633,6 +657,7 @@ void vtkLineageView::PrepareForRendering()
 
   this->Superclass::PrepareForRendering();
 }
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void vtkLineageView::PrintSelf(ostream& os, vtkIndent indent)

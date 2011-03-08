@@ -7,9 +7,7 @@
 #include <QInputDialog>
 #include <QListView>
 #include <QPushButton>
-#include <QProgressBar>
 #include <QString>
-#include <QTimer>
 #include <QStandardItem>
 #include <QStandardItemModel>
 
@@ -135,12 +133,9 @@ CellLineage( QWidget* iParent, Qt::WindowFlags iFlags ) :
   // labels
   connect(this->ui->labelType, SIGNAL(currentIndexChanged(QString)),
     this, SLOT(slotChangeLabel(QString)));
-
-
   // Time controls
-  this->globalTime = 1; // Start time at 1 :)
   this->ui->timeSlider->setMinimum(0);
-  this->ui->timeSlider->setMaximum(37+3*99);
+  this->ui->timeSlider->setMaximum(100);
   connect(this->ui->timeSlider, SIGNAL(valueChanged(int)),
     this, SLOT(slotSetGlobalTimeValue(int)));
   connect(this->ui->timeSlider, SIGNAL(sliderMoved(int)),
@@ -169,8 +164,6 @@ CellLineage::~CellLineage()
 // Set the global time value for all views
 void CellLineage::slotGlobalTimeValueChanging(int value)
 {
-  this->globalTime = value;
-
   // Set the value of the slider and line edit.
   this->ui->timeSlider->setValue(value);
 
@@ -185,20 +178,12 @@ void CellLineage::slotGlobalTimeValueChanging(int value)
 // Set the global time value for all views
 void CellLineage::slotSetGlobalTimeValue(int value)
 {
-  this->globalTime = value;
-
-  // Put mouse into busy mode
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-
   // Set the value of the slider and line edit.
   this->ui->timeSlider->setValue(value);
 
   // Have the lineage view update itself
   this->LineageView->SetCurrentTime(value);
   this->LineageView->Render();
-
-  // Have default cursor come back
-  QApplication::restoreOverrideCursor();
 }
 //----------------------------------------------------------------------------
 
@@ -353,13 +338,17 @@ void CellLineage::slotOpenLineageData()
 
   // set the active scalar, update mappers and LUTs
   char* activeScalar = this->ui->colorCodeType->currentText().toLocal8Bit().data();
-  // change active scalar
-  /*LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(activeScalar);
-  // update the lookup tables
+
+  //vertex: node (small square)
+  this->LineageView->SetVertexColorFieldName(activeScalar);
+  this->LineageView->SetEdgeColorFieldName(activeScalar);
+
+  // update time slider for the iso contours
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(activeScalar)->GetRange();
-  this->LineageView->UpdateMappersForColorCoding(activeScalar, range[0], range[1], false);*/
-  this->LineageView->SetEdgeColorFieldName(activeScalar);
+  this->ui->timeSlider->setMinimum(range[0]);
+  this->ui->timeSlider->setMaximum(range[1]);
+  this->ui->timeSlider->setValue(range[0]);
 }
 //----------------------------------------------------------------------------
 
@@ -401,14 +390,15 @@ void CellLineage::slotEnableColorCode(int state)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeColorCode(QString array)
 {
-/*  // change active scalar
-  LineageReader->GetOutput()->GetVertexData()->SetActiveScalars(array.toLocal8Bit().data());
-  // update LUT
+ this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
+ this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
+
+  // update time slider for the iso contours
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
-  this->LineageView->UpdateMappersForColorCoding(array.toLocal8Bit().data(), range[0], range[1], true);
-*/
-  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
+  this->ui->timeSlider->setMinimum(range[0]);
+  this->ui->timeSlider->setMaximum(range[1]);
+  this->ui->timeSlider->setValue(range[0]);
 
   //update visu
   this->LineageView->Render();
