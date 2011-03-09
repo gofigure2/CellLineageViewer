@@ -410,20 +410,21 @@ void vtkLineageView::SetEdgeColorFieldName(const std::string& field)
     return;
     }
 
-  this->CollapseMapper->SetScalarModeToUseCellFieldData();
+  this->CollapseMapper->SetScalarModeToUsePointFieldData();
   this->CollapseMapper->SelectColorArray(field.c_str());
+  this->PlaneMapper->SetScalarModeToUsePointFieldData();
+  this->PlaneMapper->SelectColorArray(field.c_str());
 
   // Okay now get the range of the data field
   double range[2];
   this->CollapseToPolyData->Update();
   vtkDataArray *array =
-    this->CollapseToPolyData->GetOutput()->GetCellData()->GetArray(field.c_str());
+    this->CollapseToPolyData->GetOutput()->GetPointData()->GetArray(field.c_str());
   if (array)
     {
     array->GetRange(range);
     this->CollapseMapper->SetScalarRange( range[0], range[1] );
     this->PlaneMapper->SetScalarRange( range[0], range[1] );
-    this->IsoLineMapper->SetScalarRange( range[0], range[1] );
     }
 }
 //----------------------------------------------------------------------------

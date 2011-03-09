@@ -403,7 +403,7 @@ void CellLineage::slotChangeColorCode(QString array)
  this->LineageView->SetVertexColorFieldName(array.toLocal8Bit().data());
  this->LineageView->SetEdgeColorFieldName(array.toLocal8Bit().data());
 
-  // update time slider for the iso contours
+  // update time slider for the iso contours - maybe not here
   double* range =
       LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data())->GetRange();
   this->ui->timeSlider->setMinimum(range[0]);
@@ -418,11 +418,6 @@ void CellLineage::slotChangeColorCode(QString array)
 //----------------------------------------------------------------------------
 void CellLineage::slotChangeLabel(QString array)
 {
-  if(!LineageReader->GetOutput()->GetVertexData()->GetArray(array.toLocal8Bit().data()))
-    {
-    return;
-    }
-
   this->LineageView->SetLabelFieldName(array.toLocal8Bit().data());
 
   //update visu
