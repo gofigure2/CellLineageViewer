@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 2.6)
 
 project(CellLineage)
@@ -14,6 +13,7 @@ set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
 set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
 set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
 set(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE FILEPATH "")
+
 find_package(Qt4 REQUIRED)
 include(${QT_USE_FILE})
 
@@ -25,7 +25,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# Set your files and resources here  
+# Set your files and resources here
 set(Srcs
   main.cxx
   CellLineage.cxx
@@ -57,7 +57,7 @@ source_group("Generated" FILES
   ${RCS_SOURCES}
 )
 
-add_definitions(-DQT_GUI_LIBS -DQT_CORE_LIB -DQT3_SUPPORT)
+add_definitions(-DQT_GUI_LIBS -DQT_CORE_LIB)
 set_source_files_properties(${Srcs} PROPERTIES
                             OBJECT_DEPENDS "${UISrcs}")
 
@@ -76,6 +76,5 @@ target_link_libraries( CellLineage
   QVTK
   ${QT_LIBRARIES}
   vtkViews
-  vtkVolumeRendering
-)
+  )
 

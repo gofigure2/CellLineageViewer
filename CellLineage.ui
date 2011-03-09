@@ -87,7 +87,7 @@
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
-               <widget class="QVTKWidget" name="vtkLineageViewWidget" native="true">
+               <widget class="QVTKWidget" name="vtkLineageViewWidget">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>1</horstretch>
@@ -451,14 +451,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QSliderLineEdit</class>
-   <extends>QWidget</extends>
-   <header>QSliderLineEdit.h</header>
-  </customwidget>
-  <customwidget>
    <class>QVTKWidget</class>
    <extends>QWidget</extends>
    <header>QVTKWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QSliderLineEdit</class>
+   <extends>QWidget</extends>
+   <header>QSliderLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

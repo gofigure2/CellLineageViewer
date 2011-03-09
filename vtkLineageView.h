@@ -61,65 +61,65 @@ class vtkTreeVertexToEdgeSelection;
 class vtkThresholdPoints;
 class vtkVertexGlyphFilter;
 
-class vtkLineageView : public vtkRenderView 
+class vtkLineageView : public vtkRenderView
 {
 public:
   static vtkLineageView *New();
   vtkTypeRevisionMacro(vtkLineageView, vtkRenderView);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   // Description:
   // The name of the vertex field used for coloring the vertices
-  virtual void SetVertexColorFieldName(const char *field);
-  virtual char* GetVertexColorFieldName();
-  
+  virtual void SetVertexColorFieldName(const std::string& field);
+  virtual std::string GetVertexColorFieldName();
+
   // Description:
   // The name of the edge field used for coloring the edges
-  virtual void SetEdgeColorFieldName(const char *field);
-  virtual char* GetEdgeColorFieldName();
-  
+  virtual void SetEdgeColorFieldName(const std::string& field);
+  virtual std::string GetEdgeColorFieldName();
+
   // Description:
   // The name of the field used for labeling
-  virtual void SetLabelFieldName(const char *field);
-  virtual char* GetLabelFieldName();
-  
+  virtual void SetLabelFieldName(const std::string& field);
+  virtual std::string GetLabelFieldName();
+
   // Description:
   // These methods turn labeling on/off. Defaulted to off
   virtual void SetLabelsOn();
   virtual void SetLabelsOff();
-  
+
   // Description:
   // The size of the font used for labeling
   virtual void SetFontSize(const int size);
   virtual int GetFontSize();
-  
+
   // Description:
   // Set/Get the field to use for the edge weights.
   vtkSetStringMacro(EdgeWeightField);
   vtkGetStringMacro(EdgeWeightField);
-  
+
   // Description:
   // Set whether to use radial layout.
   void SetRadialLayout(bool radial);
   bool GetRadialLayout() { return this->Radial; }
-  
+
   // Description:
   // Set the radial layout angle.
   void SetRadialAngle(int angle);
   int GetRadialAngle();
-  
+
   // Description:
   // Set the log spacing for the layout.
   void SetLogSpacingFactor(float spacing);
-  
+
   // Description:
   // Turn back plane on/off. Defaulted to off
   virtual void SetBackPlane(bool state);
-  
+
   // Description:
   // Turn isocontour on/off. Defaulted to on
   virtual void SetIsoContour(bool state);
-  
+
   // Description:
   // Set the current time
   void SetCurrentTime(double time_value);
@@ -163,24 +163,24 @@ public:
 protected:
   vtkLineageView();
   ~vtkLineageView();
-  
+
   // Description:
   // Connects the representation to the internal pipeline.
   virtual void AddRepresentationInternal(vtkDataRepresentation* rep);
-  
+
   // Description:
   // Disconnects the representation from the internal pipeline.
   virtual void RemoveRepresentationInternal(vtkDataRepresentation* rep);
-  
+
   // Description:
   // Called to process the user event from the interactor style.
-  virtual void ProcessEvents(vtkObject* caller, unsigned long eventId, 
+  virtual void ProcessEvents(vtkObject* caller, unsigned long eventId,
     void* callData);
-  
+
   // Description:
   // Connects the selection link to the internal pipeline.
   virtual void SetAnnotationLink(vtkAnnotationLink* link);
-  
+
   // Decsription:
   // Prepares the view for rendering.
   virtual void PrepareForRendering();
@@ -218,39 +218,39 @@ protected:
   vtkSmartPointer<vtkActor>                         CollapsedGlyphActor;
   vtkSmartPointer<vtkThresholdPoints>               CollapsedThreshold;
   //ETX
-  
+
   // Description:
-  // This intercepts events from the graph layout class 
+  // This intercepts events from the graph layout class
   // and re-emits them as if they came from this class.
   vtkEventForwarderCommand *EventForwarder;
   unsigned long ObserverTag;
 
   int SelectMode;
-  
+
 private:
 
   // Internally used methods
-  
+
   // Description:
   // Setup the internal pipeline for the graph layout view
   virtual void SetupPipeline();
-  
+
   // Description:
   // The field to use for the edge weights
   char*  EdgeWeightField;
-  
+
   // Description:
   // Whether to use radial layout.
   bool Radial;
-  
+
   // Description:
   // The radial layout angle.
   int Angle;
-  
+
   // Description:
   // The log spacing for the layout.
   float LogSpacing;
-  
+
   // Description:
   // Keep track of the minimum, maximum, current time values
   double MinTime;
